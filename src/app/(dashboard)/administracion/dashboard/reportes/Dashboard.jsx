@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import { DateRange } from 'react-date-range';
 import TableDashboard from './components/tableDashboard/TableDashboard'; 
 import DashboardSquares from './components/dashboardSquares/DashboardSquares';
 import ExpirationsByStore from './components/dashboardSquares/ExpirationsByStore';
@@ -8,11 +9,29 @@ import HttpService from '@services/HttpService';
 import './Dashboard.scss';
 import useStore from '@store/useStore';
 import { useRouter } from 'next/navigation';
+import 'react-date-range/dist/styles.css';
+import 'react-date-range/dist/theme/default.css';
 
 const Dashboard = () => {
 
   const roleId = useStore((state) => state.jwtData?.roleId);
+  const selectedStore = useStore((state) => state.selectedStore);
   const router = useRouter();
+  const httpService = new HttpService();
+  const calendarRef = useRef(null);
+
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+  const todayEnd = new Date();
+  todayEnd.setHours(23, 59, 59, 999);
+
+  const [range, setRange] = useState({
+    startDate: todayStart,
+    endDate: todayEnd,
+    key: 'selection',
+  });
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [loadingSales, setLoadingSales] = useState(false);
 
   useEffect(() => {
     if (roleId == null) {
@@ -26,6 +45,66 @@ const Dashboard = () => {
   }, [roleId, router]);
 
   const [dataSales, setDataSales] = useState([]);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (
+        showCalendar &&
+        calendarRef.current &&
+        !calendarRef.current.contains(e.target)
+      ) {
+        setShowCalendar(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showCalendar]);
+
+  const fetchSales = async (start, end) => {
+    if (!selectedStore) {
+      setDataSales([]);
+      return;
+    }
+
+    setLoadingSales(true);
+    try {
+      const payload = {
+        startDate: start.toISOString(),
+        endDate: end.toISOString(),
+        storeId: selectedStore,
+      };
+      const resp = await httpService.postData('/sale/filter', payload);
+      if (resp.status === 200) {
+        const filteredData = (resp.data || []).filter((item) => !item.isDeleted);
+        setDataSales(filteredData);
+      } else {
+        setDataSales([]);
+      }
+    } catch (err) {
+      console.error('Error fetchSales:', err);
+      setDataSales([]);
+    } finally {
+      setLoadingSales(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchSales(range.startDate, range.endDate);
+  }, [selectedStore]);
+
+  const handleSelectRange = (ranges) => {
+    const nextRange = ranges.selection;
+    setRange(nextRange);
+    setShowCalendar(false);
+    fetchSales(nextRange.startDate, nextRange.endDate);
+  };
+
+  const formatTopDate = (date) =>
+    new Intl.DateTimeFormat('es-CO', {
+      day: 'numeric',
+      month: 'long',
+    }).format(date);
 
   const exportarVentas = async () => {
     const toNumberOrNull = (value) => {
@@ -183,20 +262,52 @@ const Dashboard = () => {
 
   return (
     <div>
-      <h1 className="mb-4">Dashboard</h1>
-      <DashboardSquares dataSales={dataSales}/>
-      <div className="mb-5 mt-5 w-100 d-flex justify-content-center">
-        <button className="exportar_btn" onClick={exportarVentas}>
-          Exportar Ventas
+      <div className="reportes-topbar" ref={calendarRef}>
+        <div className="range-controls">
+          <div className="range-preview">
+            <span className="range-date-chip">{formatTopDate(range.startDate)}</span>
+            <span className="range-separator">-</span>
+            <span className="range-date-chip">{formatTopDate(range.endDate)}</span>
+          </div>
+
+          <button
+            className="btn btn-range-select"
+            onClick={() => setShowCalendar((prev) => !prev)}
+          >
+            {showCalendar ? 'Cerrar selector' : 'Seleccionar rango'}
+          </button>
+
+          {showCalendar && (
+            <div className="calendar-popover">
+              <DateRange
+                ranges={[range]}
+                onChange={handleSelectRange}
+                months={2}
+                direction="horizontal"
+                showSelectionPreview
+                moveRangeOnFirstSelection={false}
+                editableDateInputs
+                rangeColors={['#5a3ec8']}
+              />
+            </div>
+          )}
+        </div>
+
+        <button className="exportar_btn" onClick={exportarVentas} disabled={!dataSales.length}>
+          ↓ Exportar Ventas
         </button>
       </div>
+
+      <DashboardSquares dataSales={dataSales}/>
+
       {/* Cajas de productos próximos a vencer por tienda */}
       {loadingExpirations ? (
         <div className="text-center my-4">Cargando productos próximos a vencer...</div>
       ) : (
         <ExpirationsByStore storesExpirations={storesExpirations} />
       )}
-      <TableDashboard setDataSales={setDataSales}/>
+
+      <TableDashboard sales={dataSales} loading={loadingSales} />
     </div>
   );
 };
