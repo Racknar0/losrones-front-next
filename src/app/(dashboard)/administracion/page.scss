@@ -68,7 +68,7 @@ body {
 
 .left_block_brand .title_login {
   font-size: 3rem;
-  color: #ffffff;
+  color: #f1f1f1;
   text-align: center;
   margin-top: 10px;
   font-weight: 700;
@@ -97,7 +97,7 @@ body {
 
 .left_block_greeting .greeting_login {
   font-size: 2rem;
-  color: #ffffff;
+  color: #dfdfdf;
   text-align: center;
   font-weight: 700;
   font-family: var(--font-luckiest-guy), cursive;
@@ -137,6 +137,40 @@ body {
   color: #000000;
   font-weight: 700;
   font-family: var(--font-poppins), sans-serif;
+}
+
+.password_field_wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.form_login .input_text_password {
+  padding-right: 44px;
+}
+
+.password_toggle_btn {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: #6564d8;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 0;
+}
+
+.password_toggle_btn:hover {
+  color: #4f4eb1;
+}
+
+.password_toggle_btn:focus-visible {
+  outline: 2px solid #ffa94d;
+  border-radius: 6px;
 }
 
 .form_login .input_text:focus,

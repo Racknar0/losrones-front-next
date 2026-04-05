@@ -1,3 +1,4 @@
+import "bootstrap/dist/css/bootstrap.min.css";
 import "./globals.css";
 import { Luckiest_Guy, Poppins } from "next/font/google";
 

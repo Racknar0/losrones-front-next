@@ -1,42 +1,30 @@
-"use client";
-
 import React, { useEffect, useState } from 'react';
-import Sidebar from '@admin-shared/Sidebar/Sidebar';
+import { Outlet } from 'react-router'; 
+import Sidebar from '../../../components/Sidebar/Sidebar';
 import './Layout.scss'; 
-import { confirmAlert } from '@helpers/alerts';
-import { CollapseIcon } from '@admin-shared/icons/CollapseIcon';
-import userImage from '@assets/user.png'; // Importa la imagen del usuario desde la carpeta de assets
-import { getAssetSrc } from '@helpers/assetSrc';
-import useStore from '@store/useStore';
-import { useRouter } from 'next/navigation';
+import { confirmAlert } from '../../../helpers/alerts';
+import { CollapseIcon } from '../../../components/icons/CollapseIcon';
+import userImage from '../../../assets/user.png'; // Importa la imagen del usuario desde la carpeta de assets
+import { getAssetSrc } from '../../../helpers/assetSrc';
+import useStore from '../../../store/useStore';
 
-const Layout = ({ children }) => {
+const Layout = () => {
 
-  const [mounted, setMounted] = useState(false);
   const [toggled, setToggled] = useState(false);
   const [broken, setBroken] = useState(false); // Estado para manejar el colapso del sidenav en pantallas pequeñas
-  const router = useRouter();
-  const token = useStore((state) => state.token);
   const jwtData = useStore((state) => state.jwtData);
   const logout = useStore((state) => state.logout);
 
   useEffect(() => {
-    setMounted(true);
     if (typeof window !== 'undefined') {
       setBroken(window.matchMedia('(max-width: 768px)').matches);
     }
   }, []);
 
+  const fullState = useStore((state) => state);
   useEffect(() => {
-    if (!mounted) return;
-    if (!token) {
-      router.replace('/administracion');
-    }
-  }, [mounted, token, router]);
-
-  if (!mounted || !token || !jwtData) {
-    return null;
-  }
+    console.log('Estado completo del store:', fullState);
+  }, [fullState]);
 
 
     const handleLogout = async () => {
@@ -49,8 +37,11 @@ const Layout = ({ children }) => {
 
         if (!confirmLogout) return; // Si el usuario cancela, no hacemos nada
 
-        await logout(); // Limpia store, localStorage y cookie de auth
-        router.replace('/administracion');
+        logout(); // Llama a la función de cierre de sesión del store
+        // Borrar localStorage o realizar cualquier acción de cierre de sesión aquí
+        localStorage.removeItem('token');
+        // Recargar la página 
+        // window.location.reload();
         
     };
 
@@ -118,7 +109,8 @@ const Layout = ({ children }) => {
 
         {/* Contenido dinámico basado en las rutas */}
         <div className="main_content">
-          {children}
+          {/* Este es el lugar donde se renderiza el contenido dependiendo de la ruta */}
+          <Outlet />
         </div>
       </div>
     </div>

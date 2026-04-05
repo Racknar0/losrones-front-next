@@ -18,6 +18,7 @@ export default function Page() {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [tienda, setTienda] = useState('');
   const [loadingTiendas, setLoadingTiendas] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -134,14 +135,36 @@ export default function Page() {
                   <label htmlFor="password" className="label label_pass">
                     Password
                   </label>
-                  <input
-                    type="password"
-                    className="input_text"
-                    id="password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
+                  <div className="password_field_wrapper">
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      className="input_text input_text_password"
+                      id="password"
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      className="password_toggle_btn"
+                      aria-label={showPassword ? 'Ocultar password' : 'Mostrar password'}
+                      onClick={() => setShowPassword((prev) => !prev)}
+                    >
+                      {showPassword ? (
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                          <path d="M3 3L21 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                          <path d="M10.6 10.6C10.2 11 10 11.5 10 12C10 13.1 10.9 14 12 14C12.5 14 13 13.8 13.4 13.4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                          <path d="M9.9 5.2C10.6 5.1 11.3 5 12 5C16.8 5 20.4 8.1 22 12C21.5 13.2 20.8 14.2 20 15.1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                          <path d="M6.2 6.2C4.5 7.4 3.2 9.1 2 12C3.6 15.9 7.2 19 12 19C13.8 19 15.4 18.6 16.8 17.8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                        </svg>
+                      ) : (
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                          <path d="M2 12C3.6 8.1 7.2 5 12 5C16.8 5 20.4 8.1 22 12C20.4 15.9 16.8 19 12 19C7.2 19 3.6 15.9 2 12Z" stroke="currentColor" strokeWidth="2" />
+                          <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2" />
+                        </svg>
+                      )}
+                    </button>
+                  </div>
                 </div>
 
                 <div className="input_group">
