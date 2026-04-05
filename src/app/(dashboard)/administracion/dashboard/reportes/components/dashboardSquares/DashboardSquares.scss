@@ -1,8 +1,9 @@
 .dashboard-cards-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 14px;
   margin: 14px 0 18px;
+  justify-items: stretch;
 }
 
 .dashboard-card {
@@ -14,6 +15,7 @@
   padding: 12px 12px 10px;
   min-height: 138px;
   max-width: 270px;
+  width: 100%;
 }
 
 .dashboard-card-icon {
@@ -46,7 +48,7 @@
 
 @media (max-width: 992px) {
   .dashboard-cards-grid {
-    grid-template-columns: repeat(2, minmax(160px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   }
 }
 

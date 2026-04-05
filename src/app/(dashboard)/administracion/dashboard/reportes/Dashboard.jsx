@@ -262,42 +262,6 @@ const Dashboard = () => {
 
   return (
     <div>
-      <div className="reportes-topbar" ref={calendarRef}>
-        <div className="range-controls">
-          <div className="range-preview">
-            <span className="range-date-chip">{formatTopDate(range.startDate)}</span>
-            <span className="range-separator">-</span>
-            <span className="range-date-chip">{formatTopDate(range.endDate)}</span>
-          </div>
-
-          <button
-            className="btn btn-range-select"
-            onClick={() => setShowCalendar((prev) => !prev)}
-          >
-            {showCalendar ? 'Cerrar selector' : 'Seleccionar rango'}
-          </button>
-
-          {showCalendar && (
-            <div className="calendar-popover">
-              <DateRange
-                ranges={[range]}
-                onChange={handleSelectRange}
-                months={2}
-                direction="horizontal"
-                showSelectionPreview
-                moveRangeOnFirstSelection={false}
-                editableDateInputs
-                rangeColors={['#5a3ec8']}
-              />
-            </div>
-          )}
-        </div>
-
-        <button className="exportar_btn" onClick={exportarVentas} disabled={!dataSales.length}>
-          ↓ Exportar Ventas
-        </button>
-      </div>
-
       <DashboardSquares dataSales={dataSales}/>
 
       {/* Cajas de productos próximos a vencer por tienda */}
@@ -307,7 +271,45 @@ const Dashboard = () => {
         <ExpirationsByStore storesExpirations={storesExpirations} />
       )}
 
-      <TableDashboard sales={dataSales} loading={loadingSales} />
+      <div className="reportes-table-section" ref={calendarRef}>
+        <div className="reportes-topbar">
+          <div className="range-controls">
+            <button
+              className="btn btn-range-select"
+              onClick={() => setShowCalendar((prev) => !prev)}
+            >
+              {showCalendar ? 'Cerrar selector' : 'Seleccionar rango'}
+            </button>
+
+            <div className="range-preview">
+              <span className="range-date-chip">{formatTopDate(range.startDate)}</span>
+              <span className="range-separator">-</span>
+              <span className="range-date-chip">{formatTopDate(range.endDate)}</span>
+            </div>
+
+            {showCalendar && (
+              <div className="calendar-popover">
+                <DateRange
+                  ranges={[range]}
+                  onChange={handleSelectRange}
+                  months={2}
+                  direction="horizontal"
+                  showSelectionPreview
+                  moveRangeOnFirstSelection={false}
+                  editableDateInputs
+                  rangeColors={['#5a3ec8']}
+                />
+              </div>
+            )}
+          </div>
+
+          <button className="exportar_btn" onClick={exportarVentas} disabled={!dataSales.length}>
+            ↓ Exportar Ventas
+          </button>
+        </div>
+
+        <TableDashboard sales={dataSales} loading={loadingSales} />
+      </div>
     </div>
   );
 };
