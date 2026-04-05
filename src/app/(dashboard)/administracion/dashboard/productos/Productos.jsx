@@ -151,8 +151,8 @@ const Productos = () => {
             <div className="tab-content mt-3">
                 {activeTab === 'productos' && (
                     <div className="tab-pane fade show active">
-                        <h1 className="text-center mt-4 pt-4">Productos</h1>
-                        <h4 className="text-center mb-4">Lista de Productos</h4>
+                        {/* <h1 className="text-center mt-4 pt-4">Productos</h1>
+                        <h4 className="text-center mb-4">Lista de Productos</h4> */}
                         <TableProduct 
                             productData={productData}
                             getProducts={getProducts}
@@ -182,8 +182,8 @@ const Productos = () => {
                 )}
                 {activeTab === 'categorias' && (
                     <div className="tab-pane fade show active">
-                        <h1 className="text-center mt-4 pt-4">Categorías</h1>
-                        <h4 className="text-center mb-4">Lista de Categorías</h4>
+                        {/* <h1 className="text-center mt-4 pt-4">Categorías</h1>
+                        <h4 className="text-center mb-4">Lista de Categorías</h4> */}
                         <TableCategories 
                             loadingCategories={loadingCategories}
                             setLoadingCategories={setLoadingCategories}

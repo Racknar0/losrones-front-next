@@ -357,14 +357,16 @@ const Stock = () => {
 
     return (
         <div className="container-fluid mt-4 main_container">
-            <h1 className="text-center  mb-5">Gestión de Stock</h1>
+            <div className="stock-toolbar mb-4">
+                <h1 className="stock-title">Gestión de Stock</h1>
 
-            <button
-            className="btn btn-success exportar_btn"
-            onClick={handleExportStock}
-            >
-            Exportar Stock
-            </button>
+                <button
+                className="exportar_btn"
+                onClick={handleExportStock}
+                >
+                Exportar Stock
+                </button>
+            </div>
 
             <div className="row">
                 {/* Panel izquierdo: Lista de productos */}

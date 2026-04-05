@@ -27,10 +27,23 @@
 
     .table{
         min-width: 1150px;
+        font-size: 1.3rem;
 
         td,
         th {
             vertical-align: middle;
+            font-size: 1.3rem;
+            padding: 0.8rem 0.7rem;
+        }
+
+        thead th {
+            font-size: 1.18rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        tbody td {
+            line-height: 1.35;
         }
     
 

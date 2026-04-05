@@ -1,5 +1,5 @@
 // src/components/products/tableProduct/TableProduct.jsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import './TableProduct.scss';
 import { DeleteIcon } from '@admin-shared/icons/DeleteIcon';
 import { EditIcon } from '@admin-shared/icons/EditIcon';
@@ -14,6 +14,8 @@ import productDefaultImg from '@assets/product_default.png';
 import { getAssetSrc } from '@helpers/assetSrc';
 import ZoomableImage from '@admin-shared/ZoomableImage/ZoomableImage';
 import useStore from '@store/useStore';
+import useChunkedVirtualizedList from '@helpers/useChunkedVirtualizedList';
+import useSortableData from '@helpers/useSortableData';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 
@@ -71,16 +73,66 @@ const TableProduct = ({
   // ----------------------------------------------------
   // Filtrar productos según searchTerm (categoría, nombre, código o código de barras)
   // ----------------------------------------------------
-  const filteredProducts = (productData || []).filter((u) => {
+  const filteredProducts = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
-    if (term === '') return true;
+
+    return (productData || []).filter((u) => {
+      if (term === '') return true;
+
+      return (
+        u.category?.name.toLowerCase().includes(term) ||
+        u.name.toLowerCase().includes(term) ||
+        u.code.toLowerCase().includes(term) ||
+        (u.barcode && u.barcode.toLowerCase().includes(term))
+      );
+    });
+  }, [productData, searchTerm]);
+
+  const { sortedItems: sortedProducts, requestSort, getSortDirection } = useSortableData(
+    filteredProducts,
+    {
+      getValue: (item, key) => {
+        switch (key) {
+          case 'category':
+            return item.category?.name || '';
+          case 'name':
+            return item.name || '';
+          case 'code':
+            return item.code || '';
+          default:
+            return '';
+        }
+      },
+    }
+  );
+
+  const {
+    visibleItems,
+    visibleCount,
+    totalCount,
+    hasMore,
+    loaderRef,
+  } = useChunkedVirtualizedList(sortedProducts, { batchSize: 20 });
+
+  const totalColumns = ['Admin', 'Moderador'].includes(role) ? 10 : 8;
+
+  const renderSortableHeader = (label, key) => {
+    const direction = getSortDirection(key);
+
     return (
-      u.category?.name.toLowerCase().includes(term) ||
-      u.name.toLowerCase().includes(term) ||
-      u.code.toLowerCase().includes(term) ||
-      (u.barcode && u.barcode.toLowerCase().includes(term))
+      <button
+        type="button"
+        className={`sort-button ${direction ? `is-${direction}` : ''}`}
+        onClick={() => requestSort(key)}
+      >
+        <span>{label}</span>
+        <span className="sort-chevron-group" aria-hidden="true">
+          <span className={`sort-chevron up ${direction === 'asc' ? 'active' : ''}`}>▲</span>
+          <span className={`sort-chevron down ${direction === 'desc' ? 'active' : ''}`}>▼</span>
+        </span>
+      </button>
     );
-  });
+  };
 
   // ----------------------------------------------------
   // Exportar productos filtrados a Excel
@@ -122,7 +174,7 @@ const TableProduct = ({
 
     worksheet.getRow(4).values = columns.map((c) => c.header);
 
-    filteredProducts.forEach((u) => {
+    sortedProducts.forEach((u) => {
       worksheet.addRow({
         categoria: u.category?.name || '',
         nombre: u.name || '',
@@ -199,8 +251,8 @@ const TableProduct = ({
       <h2 className="mb-3">Lista de Productos</h2>
 
       {/* ———————– FILTRO Y BOTÓN DE EXPORTAR ———————– */}
-      <div className="row mb-3  d-flex flex-column">
-        <div className="col-md-6">
+      <div className="products-toolbar mb-3">
+        <div className="products-search-wrap">
           <input
             type="text"
             className="form-control form_buscador"
@@ -209,9 +261,10 @@ const TableProduct = ({
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <div className="col-md-3">
+
+        <div className="products-export-wrap">
           <button
-            className="btn btn-success  btn-exportar"
+            className="btn-exportar"
             onClick={exportarProductos}
             disabled={filteredProducts.length === 0}
           >
@@ -220,14 +273,20 @@ const TableProduct = ({
         </div>
       </div>
 
+      {!loadingProduct && totalCount > 0 && (
+        <div className="products-virtualization-hint mb-3">
+          Mostrando {visibleCount} de {totalCount} productos
+        </div>
+      )}
+
       {/* ———————– TABLA DE PRODUCTOS ———————– */}
       <table className="table table-striped table-hover">
         <thead>
           <tr>
             {['Admin', 'Moderador'].includes(role) && <th>Acciones</th>}
-            <th>Categoría</th>
-            <th>Nombre</th>
-            <th>Código</th>
+            <th>{renderSortableHeader('Categoría', 'category')}</th>
+            <th>{renderSortableHeader('Nombre', 'name')}</th>
+            <th>{renderSortableHeader('Código', 'code')}</th>
             <th>Código de Barras</th>
             {['Admin', 'Moderador'].includes(role) && <th>$ Compra</th>}
             <th>$ Venta</th>
@@ -239,19 +298,21 @@ const TableProduct = ({
         <tbody>
           {loadingProduct ? (
             <tr>
-              <td colSpan="9" className="text-center py-4">
-                <Spinner color="#6564d8" />
+              <td colSpan={totalColumns} className="table-loading-cell">
+                <div className="table-loading-spinner">
+                  <Spinner color="#6564d8" />
+                </div>
               </td>
             </tr>
           ) : filteredProducts.length === 0 ? (
             <tr>
-              <td colSpan="9" className="text-center py-4">
+              <td colSpan={totalColumns} className="text-center py-4">
                 No hay productos que coincidan con el filtro.
               </td>
             </tr>
           ) : (
-            filteredProducts.map((u, index) => (
-              <tr key={index}>
+            visibleItems.map((u, index) => (
+              <tr key={u.id || `${u.code || 'prod'}-${index}`}>
                 {['Admin', 'Moderador'].includes(role) && (
                   <td>
                     <button
@@ -302,6 +363,16 @@ const TableProduct = ({
                 </td>
               </tr>
             ))
+          )}
+
+          {!loadingProduct && hasMore && (
+            <tr>
+              <td colSpan={totalColumns}>
+                <div ref={loaderRef} className="table-virtual-loader">
+                  Cargando más productos...
+                </div>
+              </td>
+            </tr>
           )}
         </tbody>
       </table>

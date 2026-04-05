@@ -22,9 +22,9 @@ import './Sidebar.scss';
 import HttpService from '@services/HttpService';
 import { InventarioIcon } from '@admin-shared/icons/InventarioIcon';
 
-const width = '250px';
+const width = '290px';
 const colapsedWidth = '70px';
-const backgroundColor = '#6564d8';
+const backgroundColor = '#4932a5';
 const transitionDuration = 500;
 
 // Configuración del menú: cada clave es la etiqueta, y el valor es un objeto con la ruta, el icono y los roles permitidos.
@@ -165,11 +165,11 @@ const Sidebar = ({ toggled, setToggled, setBroken }) => {
                                 backgroundColor: active ? '#f3f3f3' : undefined,
                                 fontWeight: active ? 'bold' : undefined,
                                 fontFamily: 'var(--font-poppins)',
-                                fontSize: '1.6rem',
+                                fontSize: '1.65rem',
                                 '&:hover': {
                                     backgroundColor: active
                                         ? '#f3f3f3'
-                                        : '#5452ad',
+                                        : '#3f2a90',
                                     color: active ? '#000' : '#fff',
                                 },
                             };

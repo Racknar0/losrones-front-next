@@ -4,15 +4,14 @@
 
     .header {
         display: flex;
-        justify-content: space-between;
         align-items: center;
-        background-color: #6564d8;
+        background-color: #4932a5;
         height: 80px;
         border-bottom: 2px solid #fff;
 
         .header_title_container {
             border-right: 2px solid #fff;
-            width: 250px;
+            width: 290px;
             height: 80px;
             display: flex;
             justify-content: center;
@@ -25,7 +24,7 @@
 
             .header_title {
                 color: #fff;
-                font-size: 2.5rem;
+                font-size: 2rem;
                 font-weight: 300;
                 margin: 0;
                 font-family: var(--font-luckiest-guy), cursive;
@@ -40,11 +39,13 @@
 
         .header_user_container{
             display: flex;
-            justify-content: center;
             align-items: center;
+            min-width: 0;
+            gap: 12px;
+            padding: 0;
 
             @media only screen and (max-width: 768px){
-                margin-left: 20px;
+                padding: 0;
              }
             
             .image_logouser_container{
@@ -64,18 +65,23 @@
             }
             
             .user_info_container{
-                text-align: center;
+                text-align: left;
                 margin-top: 0px;
                 color: #fff;
                 font-size: 1.4rem;
                 font-family: var(--font-poppins), sans-serif;
+                // min-width: 180px;
+                // max-width: 260px;
 
                
         
                 p {
                     margin: 0;
                     text-align: start;
-                    margin-left: 10px;
+                    margin-left: 0;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                 }
         
                 .user_name_container{
@@ -86,8 +92,8 @@
                 }
                 .user_role_container{
                     p {
-                        font-size: 1.2rem;
-                        font-weight: 400;
+                        font-size: 1.28rem;
+                        font-weight: 500;
                     }
                 }
             }
@@ -95,23 +101,37 @@
 
         .header_right_container {
             display: flex;
+            align-items: center;
+            margin-left: auto;
+            gap: 16px;
+            padding-right: 18px;
 
             .logout_btn {
-                background-color: #fff;
-                color: #6564d8;
-                border: none;
-                border-radius: 5px;
-                height: 30px;
-                width: 100px;
+                background-color: #ffffff;
+                color: #4932a5;
+                border: 1px solid rgba(255, 255, 255, 0.65);
+                border-radius: 999px;
+                min-height: 40px;
+                padding: 0 18px;
                 cursor: pointer;
-                font-size: 1.4rem;
-                margin-right: 20px;
-                font-family: var(--font-luckiest-guy), cursive;
+                font-size: 1.25rem;
+                font-weight: 600;
+                letter-spacing: 0.02em;
+                margin-right: 0;
+                font-family: var(--font-poppins), sans-serif;
+                box-shadow: 0 6px 16px rgba(34, 20, 83, 0.18);
+                transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 
                 &:hover {
-                    background-color: #6564d8;
+                    background-color: rgba(255, 255, 255, 0.12);
                     color: #fff;
-                    border: 2px solid #fff;
+                    border-color: rgba(255, 255, 255, 0.9);
+                    transform: translateY(-1px);
+                    box-shadow: 0 10px 22px rgba(24, 11, 63, 0.28);
+                }
+
+                &:active {
+                    transform: translateY(0);
                 }
             }
 
@@ -120,11 +140,11 @@
                 border-radius: 5px;
                 cursor: pointer;
                 font-size: 1rem;
-                margin-right: 20px;
-                background-color: #6564d8;
+                margin-right: 0;
+                background-color: #4932a5;
 
                 &:hover {
-                    background-color: #6564d8;
+                    background-color: #4932a5;
                 }
 
                 .collapse_icon{
@@ -135,6 +155,17 @@
                         transform: scale(1.2);
                     }
                 }
+            }
+        }
+
+        @media only screen and (max-width: 768px){
+            .header_right_container {
+                padding-right: 12px;
+                gap: 10px;
+            }
+
+            .header_user_container {
+                max-width: 180px;
             }
         }
     }
@@ -148,6 +179,7 @@
             padding: 20px;
             font-size: 1.6rem;
             overflow-x: auto;
+            padding-bottom: 40px;
         }
     }
 }

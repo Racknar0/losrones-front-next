@@ -66,30 +66,28 @@ const Layout = ({ children }) => {
           </h1>
         </div>
 
-        <div className="header_user_container">
-                <div className='image_logouser_container'>
-                    <img className='image_logouser' src={
-                      jwtData?.userImage ? `${process.env.NEXT_PUBLIC_BACK_HOST}/${jwtData.userImage}` : getAssetSrc(userImage)
-                    } alt="Logo de usuario" />
-                </div>
-                <div className='user_info_container'>
-                    <div className='user_name_container'>
-                        <p className='user_name'>
-                          {jwtData?.username || 'Usuario no disponible'}
-                        </p>
-                    </div>
-                    <div className='user_role_container'>
-                        <p className='user_role'>
-                          {
-                            jwtData?.role || 'Rol no disponible'
-                          }
-                        </p>
-                    </div>
-                </div>
-          </div>
-
-
         <div className='header_right_container'>
+          <div className="header_user_container">
+                  <div className='image_logouser_container'>
+                      <img className='image_logouser' src={
+                        jwtData?.userImage ? `${process.env.NEXT_PUBLIC_BACK_HOST}/${jwtData.userImage}` : getAssetSrc(userImage)
+                      } alt="Logo de usuario" />
+                  </div>
+                  <div className='user_info_container'>
+                      <div className='user_name_container'>
+                          <p className='user_name'>
+                            {jwtData?.username || 'Usuario no disponible'}
+                          </p>
+                      </div>
+                      <div className='user_role_container'>
+                          <p className='user_role'>
+                            {
+                              jwtData?.role || 'Rol no disponible'
+                            }
+                          </p>
+                      </div>
+                  </div>
+            </div>
           <button className="logout_btn" onClick={handleLogout}> Desconectar </button>
           {broken && ( 
             <button 

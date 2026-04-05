@@ -60,15 +60,19 @@
 
     &:hover {
         background: #4932a5;
+        color: #eeff00;
+        box-shadow: 0 4px 12px rgba(90, 62, 200, 0.3);
     }
 }
 
 .exportar_btn {
     margin-left: auto;
-    background: #4caf50;
+    background: #5a3ec8;
 
     &:hover {
-        background: #295c2b;
+        background: #4932a5;
+        color: #eeff00;
+        box-shadow: 0 4px 12px rgba(90, 62, 200, 0.3);
     }
 
     &:disabled {
