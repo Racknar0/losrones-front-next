@@ -68,8 +68,9 @@ const removeFromStorage = (key) => {
 const initialToken = getFromStorage('token') || getFromCookie(AUTH_COOKIE_NAME) || null;
 const initialJwtData = initialToken ? decodeToken(initialToken) : null;
 
-// Inicializa selectedStore desde localStorage
-const initialSelectedStore = getFromStorage('selectedStore') || null;
+// Inicializa selectedStore desde localStorage o desde la tienda del token actual
+const initialSelectedStore =
+  getFromStorage('selectedStore') || initialJwtData?.storeLogin || null;
 
 const useStore = create(
   subscribeWithSelector((set, get) => ({
@@ -101,7 +102,11 @@ const useStore = create(
         setInStorage('token', token);
         setAuthCookie(token);
         const jwtData = decodeToken(token);
-        set({ token, jwtData });
+        const selectedStore = getFromStorage('selectedStore') || jwtData?.storeLogin || null;
+        if (selectedStore) {
+          setInStorage('selectedStore', selectedStore);
+        }
+        set({ token, jwtData, selectedStore });
       } catch (error) {
         console.error('Error al iniciar sesión:', error);
       } finally {

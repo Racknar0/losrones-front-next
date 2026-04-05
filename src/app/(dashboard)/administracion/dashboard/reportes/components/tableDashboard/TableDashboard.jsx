@@ -53,17 +53,19 @@ const TableDashboard = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showCalendar]);
 
-  // 3) Al montarse, traigo los recibos de hoy
+  // 3) Cargar recibos cuando ya existe tienda seleccionada
   useEffect(() => {
-    fetchRecibos(range.startDate, range.endDate);
-  }, []); // <-- solo la primera vez
-
-  useEffect(() => {
+    if (!selectedStore) {
+      setRecibos([]);
+      setDataSales([]);
+      return;
+    }
     fetchRecibos(range.startDate, range.endDate);
   }, [selectedStore]); // <-- cada vez que cambia la tienda
 
   // fetchRecibos reutilizable: recibe dos Date
   const fetchRecibos = async (start, end) => {
+    if (!selectedStore) return;
     setLoading(true);
     const payload = {
       startDate: start.toISOString(),

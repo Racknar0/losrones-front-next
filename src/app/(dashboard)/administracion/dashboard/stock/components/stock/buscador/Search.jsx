@@ -15,7 +15,7 @@ const Search = ({
 }) => {
 
 
-  const { role } = useStore((state) => state.jwtData);
+  const role = useStore((state) => state.jwtData?.role);
 
   const getStockClass = (stock) => {
     if (!stock?.stockunit || !stock?.stockunit.length) return 'low'; // Si no hay stock

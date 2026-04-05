@@ -15,6 +15,9 @@ const Dashboard = () => {
   const router = useRouter();
 
   useEffect(() => {
+    if (roleId == null) {
+      return;
+    }
     // validar si el usuario tiene permisos para ver el dashboard
     if (roleId !== 2) {
       router.push('/administracion/dashboard/ventas');

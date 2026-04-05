@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState } from 'react';
 import { Sidebar as Sidenav, Menu, MenuItem } from 'react-pro-sidebar';
 import Link from 'next/link';
@@ -117,26 +119,26 @@ const Sidebar = ({ toggled, setToggled, setBroken }) => {
     const httpService = new HttpService();
 
     useEffect(() => {
-        if (jwtData?.roleId === 2) {
-            const getTiendas = async () => {
-                try {
-                    const response = await httpService.getData('/stores');
-                    const tiendasData = response.data;
-                    setTiendas(tiendasData);
-                } catch (error) {
-                    console.error('Error fetching tiendas:', error);
-                }
-            };
-            getTiendas();
+        if (jwtData?.roleId !== 2) return;
 
-            // setear la tienda con la que se inicia sesión
-            
-        }
+        const getTiendas = async () => {
+            try {
+                const response = await httpService.getData('/stores');
+                const tiendasData = response.data;
+                setTiendas(tiendasData);
+            } catch (error) {
+                console.error('Error fetching tiendas:', error);
+            }
+        };
 
-                if (!selectedStore && jwtData?.storeLogin) {
+        getTiendas();
+    }, [jwtData?.roleId]);
+
+    useEffect(() => {
+        if (!selectedStore && jwtData?.storeLogin) {
             setSelectedStore(jwtData.storeLogin);
-          }
-    }, []);
+        }
+    }, [jwtData?.storeLogin, selectedStore, setSelectedStore]);
 
     return (
         <Sidenav
@@ -162,7 +164,7 @@ const Sidebar = ({ toggled, setToggled, setBroken }) => {
                                 color: active ? '#000' : '#fff',
                                 backgroundColor: active ? '#f3f3f3' : undefined,
                                 fontWeight: active ? 'bold' : undefined,
-                                fontFamily: 'poppins',
+                                fontFamily: 'var(--font-poppins)',
                                 fontSize: '1.6rem',
                                 '&:hover': {
                                     backgroundColor: active

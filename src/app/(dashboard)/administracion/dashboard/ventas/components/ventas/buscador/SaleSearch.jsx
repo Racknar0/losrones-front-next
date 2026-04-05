@@ -17,7 +17,7 @@ const SaleSearch = ({
 
   const httpService = new HttpService();
 
-  const { role } = useStore((state) => state.jwtData);
+  const role = useStore((state) => state.jwtData?.role);
   const cupones = useStore((state) => state.cupones);
   const setCupones = useStore((state) => state.setCupones);
   const [loadingCupones, setLoadingCupones] = useState(false);

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState } from 'react';
 import Sidebar from '@admin-shared/Sidebar/Sidebar';
 import './Layout.scss'; 
@@ -9,21 +11,22 @@ import useStore from '@store/useStore';
 
 const Layout = ({ children }) => {
 
+  const [mounted, setMounted] = useState(false);
   const [toggled, setToggled] = useState(false);
   const [broken, setBroken] = useState(false); // Estado para manejar el colapso del sidenav en pantallas pequeñas
   const jwtData = useStore((state) => state.jwtData);
   const logout = useStore((state) => state.logout);
 
   useEffect(() => {
+    setMounted(true);
     if (typeof window !== 'undefined') {
       setBroken(window.matchMedia('(max-width: 768px)').matches);
     }
   }, []);
 
-  const fullState = useStore((state) => state);
-  useEffect(() => {
-    console.log('Estado completo del store:', fullState);
-  }, [fullState]);
+  if (!mounted) {
+    return null;
+  }
 
 
     const handleLogout = async () => {

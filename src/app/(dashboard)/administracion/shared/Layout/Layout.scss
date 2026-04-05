@@ -28,7 +28,7 @@
                 font-size: 2.5rem;
                 font-weight: 300;
                 margin: 0;
-                font-family: 'Luckiest Guy', cursive;
+                font-family: var(--font-luckiest-guy), cursive;
 
                 @media only screen and (max-width: 768px){
                     font-size: 1.5rem;
@@ -68,7 +68,7 @@
                 margin-top: 0px;
                 color: #fff;
                 font-size: 1.4rem;
-                font-family: 'poppins', sans-serif;
+                font-family: var(--font-poppins), sans-serif;
 
                
         
@@ -106,7 +106,7 @@
                 cursor: pointer;
                 font-size: 1.4rem;
                 margin-right: 20px;
-                font-family: 'Luckiest Guy', cursive;
+                font-family: var(--font-luckiest-guy), cursive;
 
                 &:hover {
                     background-color: #6564d8;
