@@ -26,8 +26,14 @@ const ExpirationsBoxes = ({ products }) => {
                   <span className="box-title box-title-contrast">{prod.name}</span>
                 </div>
                 <div className="box-body box-body-contrast">
-                  <span>Código: {prod.code}</span><br/>
-                  <span>Stock: {prod.stockunitCount || prod.stockunit?.length || 0}</span><br/>
+                  <div className="box-meta-row">
+                    <span className="box-label">Código</span>
+                    <span className="box-value">{prod.code}</span>
+                  </div>
+                  <div className="box-meta-row">
+                    <span className="box-label">Stock</span>
+                    <span className="box-stock-pill">{prod.stockunitCount || prod.stockunit?.length || 0}</span>
+                  </div>
                 </div>
               </div>
             );
