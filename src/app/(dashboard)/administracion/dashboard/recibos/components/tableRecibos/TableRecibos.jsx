@@ -166,7 +166,7 @@ const TableRecibos = () => {
             dataRecibo: recibo,
         };
         setDataCambio(datacambio);
-        router.push('/administracion/dashboard/ventas');
+        router.push('/dashboard/ventas');
     };
 
     return (

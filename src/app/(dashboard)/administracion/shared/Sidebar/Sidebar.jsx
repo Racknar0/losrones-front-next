@@ -31,58 +31,58 @@ const transitionDuration = 500;
 const menuConfig = {
     Dashboard: {
         roles: ['2'],
-        path: '/administracion/dashboard/reportes',
+        path: '/dashboard/reportes',
         icon: <ChartIcon width={40} height={40} />,
     },
     Ventas: {
         roles: ['1'],
-        path: '/administracion/dashboard/ventas',
+        path: '/dashboard/ventas',
         icon: <SellIcon width={40} height={40} />,
     },
 
     Productos: {
         roles: ['1', '2'],
-        path: '/administracion/dashboard/productos',
+        path: '/dashboard/productos',
         icon: <ProductIcon width={40} height={40} />,
     },
     Stock: {
         roles: ['1', '2', '3'],
-        path: '/administracion/dashboard/stock',
+        path: '/dashboard/stock',
         icon: <InventarioIcon width={40} height={40} />,
     },
     Movimientos: {
         roles: ['1', '2', '3'],
-        path: '/administracion/dashboard/movimientos',
+        path: '/dashboard/movimientos',
         icon: <InventarioIcon width={40} height={40} />,
     },
     Usuarios: {
         roles: ['2'],
-        path: '/administracion/dashboard/usuarios',
+        path: '/dashboard/usuarios',
         icon: <UserAddIcon width={40} height={40} />,
     },
     Cupones: {
         roles: ['2'],
-        path: '/administracion/dashboard/cupones',
+        path: '/dashboard/cupones',
         icon: <CouponIcon width={40} height={40} />,
     },
     Recibos: {
         roles: ['1', '2'],
-        path: '/administracion/dashboard/recibos',
+        path: '/dashboard/recibos',
         icon: <ReciboIcon width={40} height={40} />,
     },
     Cortes: {
         roles: ['1'],
-        path: '/administracion/dashboard/cortes',
+        path: '/dashboard/cortes',
         icon: <CorteIcon width={40} height={40} />,
     },
     ListadoCortes: {
         roles: ['1', '2'],
-        path: '/administracion/dashboard/listado-cortes',
+        path: '/dashboard/listado-cortes',
         icon: <CorteIcon width={40} height={40} />,
     },
     'Códigos de Barras': {
         roles: ['1', '2'],
-        path: '/administracion/dashboard/codigos-barras',
+        path: '/dashboard/codigos-barras',
         icon: <BarcodeIcon width={40} height={40} />,
     },
     // Apartados: {

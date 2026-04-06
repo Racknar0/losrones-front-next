@@ -26,7 +26,7 @@ export default function Page() {
 
   useEffect(() => {
     if (token) {
-      router.push('/administracion/dashboard/reportes');
+      router.push('/dashboard/reportes');
     }
   }, [token, router]);
 
@@ -81,7 +81,7 @@ export default function Page() {
         const authToken = response.data.token;
         login(authToken);
         await timerAlert('Bienvenido', 'Acceso exitoso', 2000).then(() => {
-          router.push('/administracion/dashboard/reportes');
+          router.push('/dashboard/reportes');
         });
       } else {
         console.error('Error:', response);

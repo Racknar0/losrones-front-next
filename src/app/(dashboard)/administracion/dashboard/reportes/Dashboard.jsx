@@ -39,7 +39,7 @@ const Dashboard = () => {
     }
     // validar si el usuario tiene permisos para ver el dashboard
     if (roleId !== 2) {
-      router.push('/administracion/dashboard/ventas');
+      router.push('/dashboard/ventas');
     }
 
   }, [roleId, router]);
