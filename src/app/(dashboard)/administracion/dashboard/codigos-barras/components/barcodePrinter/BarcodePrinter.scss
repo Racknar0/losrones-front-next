@@ -1,20 +1,33 @@
 .barcode-printer {
     max-width: 1200px;
-    margin: 0 auto;
+    margin: 0;
     padding: 20px;
 
     .header {
-        text-align: center;
-        margin-bottom: 30px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+        text-align: left;
+        margin-bottom: 24px;
+        padding: 14px 16px;
+        border-radius: 12px;
+        background: linear-gradient(90deg, #f2eeff 0%, #eef4ff 100%);
 
         h2 {
-            color: #333;
-            margin-bottom: 10px;
+            color: #4932a5;
+            margin-bottom: 0;
+            font-size: 1.45rem;
+            font-weight: 700;
+            letter-spacing: 0.01em;
         }
 
         p {
-            color: #666;
+            color: #5b47b8;
             margin: 0;
+            font-size: 0.95rem;
+            line-height: 1.35;
+            font-weight: 500;
         }
     }
 
@@ -119,7 +132,7 @@
 
         .actions {
             margin-top: 20px;
-            text-align: center;
+            text-align: left;
 
             .btn {
                 margin: 0 5px;
@@ -129,7 +142,7 @@
 
     .preview-area {
         .preview-actions {
-            text-align: center;
+            text-align: left;
             margin-bottom: 20px;
 
             .btn {
@@ -140,7 +153,7 @@
         .print-content {
             .barcodes-grid {
                 display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
                 gap: 15px;
                 padding: 20px;
 
@@ -163,7 +176,10 @@
                     }
 
                     canvas {
-                        margin: 5px 0;
+                        display: block;
+                        width: 100% !important;
+                        height: auto !important;
+                        margin: 6px 0;
                     }
 
                     .product-code {
@@ -192,6 +208,7 @@
 
     .barcode-printer {
         padding: 0;
+        max-width: none;
 
         .print-content {
             .barcodes-grid {
@@ -258,6 +275,18 @@
                     grid-template-columns: repeat(2, 1fr);
                     gap: 10px;
                     padding: 10px;
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 576px) {
+    .barcode-printer {
+        .preview-area {
+            .print-content {
+                .barcodes-grid {
+                    grid-template-columns: 1fr;
                 }
             }
         }

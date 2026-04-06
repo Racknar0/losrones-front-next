@@ -42,6 +42,12 @@ const TableRecibos = () => {
     const [showModal, setShowModal] = useState(false);
     const [selected, setSelected] = useState(null);
 
+    const formatTopDate = (date) =>
+        new Intl.DateTimeFormat('es-CO', {
+            day: 'numeric',
+            month: 'long',
+        }).format(date);
+
     const router = useRouter();
 
     // cerrar picker al hacer click fuera
@@ -167,28 +173,36 @@ const TableRecibos = () => {
         <div className="tableRecibos container-fluid mt-4">
             <h1 className="mb-4">Recibos</h1>
 
-            <div className="date-picker-wrapper mb-3 w-100">
-                <button
-                    className="btn btn-range"
-                    onClick={() => setShowCalendar((v) => !v)}
-                >
-                    {showCalendar ? 'Cerrar selector' : 'Seleccionar rango'}
-                </button>
+            <div className="recibos-topbar mb-3" ref={calendarRef}>
+                <div className="range-controls">
+                    <button
+                        className="btn-range-select"
+                        onClick={() => setShowCalendar((v) => !v)}
+                    >
+                        {showCalendar ? 'Cerrar selector' : 'Seleccionar rango'}
+                    </button>
 
-                {showCalendar && (
-                    <div className="calendar-popover" ref={calendarRef}>
-                        <DateRange
-                            ranges={[range]}
-                            onChange={handleSelect}
-                            months={2}
-                            direction="horizontal"
-                            showSelectionPreview
-                            moveRangeOnFirstSelection={false}
-                            editableDateInputs
-                            rangeColors={['#6564d8']}
-                        />
+                    <div className="range-preview">
+                        <span className="range-date-chip">{formatTopDate(range.startDate)}</span>
+                        <span className="range-separator">-</span>
+                        <span className="range-date-chip">{formatTopDate(range.endDate)}</span>
                     </div>
-                )}
+
+                    {showCalendar && (
+                        <div className="calendar-popover">
+                            <DateRange
+                                ranges={[range]}
+                                onChange={handleSelect}
+                                months={2}
+                                direction="horizontal"
+                                showSelectionPreview
+                                moveRangeOnFirstSelection={false}
+                                editableDateInputs
+                                rangeColors={['#5a3ec8']}
+                            />
+                        </div>
+                    )}
+                </div>
             </div>
 
             <div className="table-responsive">

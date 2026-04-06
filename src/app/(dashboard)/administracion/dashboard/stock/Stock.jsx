@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import HttpService from '@services/HttpService';
 import {
     confirmAlert,
@@ -14,6 +14,7 @@ import Modal from '@admin-shared/modal/Modal';
 import StockTable from './components/stock/stockTable/StockTable.jsx';   
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import useChunkedVirtualizedList from '@helpers/useChunkedVirtualizedList';
 
 // const mockStores = [
 //   { id: 1, name: 'Tienda Centro' },
@@ -34,6 +35,7 @@ const Stock = () => {
 
     // Estado para el término de búsqueda
     const [searchTerm, setSearchTerm] = useState('');
+    const [sortMode, setSortMode] = useState('default');
 
     // Estados para el formulario de agregar stock
     const [quantity, setQuantity] = useState(1);
@@ -81,13 +83,84 @@ const Stock = () => {
     };
 
     // Filtramos los productos por nombre o código, sin importar mayúsculas/minúsculas
-    const filteredProducts = productData.filter((prod) => {
+    const filteredProducts = useMemo(() => {
         const term = searchTerm.toLowerCase();
-        return (
+
+        return productData.filter((prod) => (
             prod.name.toLowerCase().includes(term) ||
             prod.code.toLowerCase().includes(term) ||
             prod.category.name.toLowerCase().includes(term)
-        );
+        ));
+    }, [productData, searchTerm]);
+
+    const sortedProducts = useMemo(() => {
+        const items = [...filteredProducts];
+        const collator = new Intl.Collator('es', {
+            sensitivity: 'base',
+            numeric: true,
+            ignorePunctuation: true,
+        });
+
+        const normalizeProductName = (value) =>
+            String(value || '')
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/[^a-zA-Z0-9\s]/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim()
+                .toLowerCase();
+
+        const normalizeCode = (value) =>
+            String(value || '')
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .trim()
+                .toLowerCase();
+
+        if (sortMode === 'alphabetical') {
+            items.sort((left, right) => {
+                const leftName = normalizeProductName(left?.name);
+                const rightName = normalizeProductName(right?.name);
+
+                const leftIsEmpty = leftName.length === 0;
+                const rightIsEmpty = rightName.length === 0;
+
+                if (leftIsEmpty !== rightIsEmpty) {
+                    return leftIsEmpty ? 1 : -1;
+                }
+
+                const byName = collator.compare(leftName, rightName);
+                if (byName !== 0) {
+                    return byName;
+                }
+
+                return collator.compare(
+                    normalizeCode(left?.code),
+                    normalizeCode(right?.code)
+                );
+            });
+        }
+
+        if (sortMode === 'stockDesc') {
+            items.sort(
+                (left, right) =>
+                    (right.stockunit?.length || 0) - (left.stockunit?.length || 0)
+            );
+        }
+
+        return items;
+    }, [filteredProducts, sortMode]);
+
+    const {
+        visibleItems: visibleProducts,
+        visibleCount: visibleProductsCount,
+        totalCount: totalProductsCount,
+        hasMore: hasMoreProducts,
+        loaderRef: productsLoaderRef,
+        loadMore: loadMoreProducts,
+    } = useChunkedVirtualizedList(sortedProducts, {
+        batchSize: 20,
+        resetKey: `${searchTerm}|${sortMode}|${sortedProducts.length}`,
     });
 
     // Al seleccionar un producto, lo establecemos y reiniciamos cantidad y fechas
@@ -374,7 +447,14 @@ const Stock = () => {
                     searchTerm={searchTerm}
                     setSearchTerm={setSearchTerm}
                     loadingProducts={loadingProducts}
-                    filteredProducts={filteredProducts}
+                    visibleProducts={visibleProducts}
+                    visibleProductsCount={visibleProductsCount}
+                    totalProductsCount={totalProductsCount}
+                    hasMoreProducts={hasMoreProducts}
+                    productsLoaderRef={productsLoaderRef}
+                    loadMoreProducts={loadMoreProducts}
+                    sortMode={sortMode}
+                    setSortMode={setSortMode}
                     selectedProduct={selectedProduct}
                     handleSelectProduct={handleSelectProduct}
                     openStockModal={openStockModal}

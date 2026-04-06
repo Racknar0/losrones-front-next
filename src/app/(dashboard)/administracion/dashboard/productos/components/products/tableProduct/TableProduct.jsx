@@ -1,5 +1,5 @@
 // src/components/products/tableProduct/TableProduct.jsx
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import './TableProduct.scss';
 import { DeleteIcon } from '@admin-shared/icons/DeleteIcon';
 import { EditIcon } from '@admin-shared/icons/EditIcon';
@@ -88,23 +88,27 @@ const TableProduct = ({
     });
   }, [productData, searchTerm]);
 
-  const { sortedItems: sortedProducts, requestSort, getSortDirection } = useSortableData(
-    filteredProducts,
-    {
-      getValue: (item, key) => {
-        switch (key) {
-          case 'category':
-            return item.category?.name || '';
-          case 'name':
-            return item.name || '';
-          case 'code':
-            return item.code || '';
-          default:
-            return '';
-        }
-      },
+  const getSortableValue = useCallback((item, key) => {
+    switch (key) {
+      case 'category':
+        return item.category?.name || '';
+      case 'name':
+        return item.name || '';
+      case 'code':
+        return item.code || '';
+      default:
+        return '';
     }
-  );
+  }, []);
+
+  const {
+    sortedItems: sortedProducts,
+    sortConfig,
+    requestSort,
+    getSortDirection,
+  } = useSortableData(filteredProducts, {
+    getValue: getSortableValue,
+  });
 
   const {
     visibleItems,
@@ -112,7 +116,11 @@ const TableProduct = ({
     totalCount,
     hasMore,
     loaderRef,
-  } = useChunkedVirtualizedList(sortedProducts, { batchSize: 20 });
+    loadMore,
+  } = useChunkedVirtualizedList(sortedProducts, {
+    batchSize: 20,
+    resetKey: `${searchTerm}|${sortConfig.key || 'none'}|${sortConfig.direction}|${sortedProducts.length}`,
+  });
 
   const totalColumns = ['Admin', 'Moderador'].includes(role) ? 10 : 8;
 
@@ -369,7 +377,13 @@ const TableProduct = ({
             <tr>
               <td colSpan={totalColumns}>
                 <div ref={loaderRef} className="table-virtual-loader">
-                  Cargando más productos...
+                  <button
+                    type="button"
+                    className="table-load-more-btn"
+                    onClick={loadMore}
+                  >
+                    Cargar 20 productos más
+                  </button>
                 </div>
               </td>
             </tr>

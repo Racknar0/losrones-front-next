@@ -29,6 +29,12 @@ const TableMovimientos = () => {
   const [searchTerm, setSearchTerm]         = useState('');
   const [actionFilter, setActionFilter]     = useState(''); // '' = Todos
 
+  const formatTopDate = (date) =>
+    new Intl.DateTimeFormat('es-CO', {
+      day: 'numeric',
+      month: 'long',
+    }).format(date);
+
   // Cerrar el picker si el usuario hace click fuera
   useEffect(() => {
     const onClickOutside = e => {
@@ -232,39 +238,47 @@ const TableMovimientos = () => {
 
   return (
     <div className="tableMovimientos container-fluid mt-4">
-      <h1 className="mb-4">Movimientos de Stock</h1>
+      {/* <h1 className="mb-4">Movimientos de Stock</h1> */}
 
-      {/* ———————– RANGO DE FECHAS ———————– */}
-      <div className="date-picker-wrapper w-100 mb-2 d-flex flex-column">
+      {/* ———————– RANGO Y EXPORTACIÓN ———————– */}
+      <div className="movimientos-topbar mb-3" ref={calendarRef}>
+        <div className="range-controls">
+          <button
+            className="btn-range-select"
+            onClick={() => setShowCalendar((show) => !show)}
+          >
+            {showCalendar ? 'Cerrar selector' : 'Seleccionar rango'}
+          </button>
+
+          <div className="range-preview">
+            <span className="range-date-chip">{formatTopDate(range.startDate)}</span>
+            <span className="range-separator">-</span>
+            <span className="range-date-chip">{formatTopDate(range.endDate)}</span>
+          </div>
+
+          {showCalendar && (
+            <div className="calendar-popover">
+              <DateRange
+                ranges={[range]}
+                onChange={handleSelect}
+                months={2}
+                direction="horizontal"
+                showSelectionPreview={true}
+                moveRangeOnFirstSelection={false}
+                editableDateInputs={true}
+                rangeColors={['#5a3ec8']}
+              />
+            </div>
+          )}
+        </div>
+
         <button
-          className="btn btn-range me-2"
-          onClick={() => setShowCalendar(show => !show)}
-        >
-          {showCalendar ? 'Clic afuera para cerrar' : 'Seleccionar rango'}
-        </button>
-        {/* BOTÓN PARA EXPORTAR A EXCEL */}
-        <button
-          className="btn btn-success btn-exportar"
+          className="exportar_btn"
           onClick={exportarMovimientos}
           disabled={filteredMovimientos.length === 0}
         >
           Exportar Movimientos
         </button>
-
-        {showCalendar && (
-          <div className="calendar-popover" ref={calendarRef}>
-            <DateRange
-              ranges={[range]}
-              onChange={handleSelect}
-              months={2}
-              direction="horizontal"
-              showSelectionPreview={true}
-              moveRangeOnFirstSelection={false}
-              editableDateInputs={true}
-              rangeColors={['#6564d8']}
-            />
-          </div>
-        )}
       </div>
 
       {/* ———————– FILTROS DE BÚSQUEDA Y TIPO DE MOVIMIENTO ———————– */}

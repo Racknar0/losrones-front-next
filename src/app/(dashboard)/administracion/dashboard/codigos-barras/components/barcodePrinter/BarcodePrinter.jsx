@@ -87,10 +87,10 @@ const BarcodePrinter = () => {
                     if (canvas) {
                         JsBarcode(canvas, product.barcode, {
                             format: "CODE128",
-                            width: 2,
-                            height: 60,
+                            width: 1.6,
+                            height: 56,
                             displayValue: true,
-                            fontSize: 12,
+                            fontSize: 11,
                             margin: 5
                         });
                     }
@@ -121,7 +121,7 @@ const BarcodePrinter = () => {
     return (
         <div className="barcode-printer">
             <div className="header">
-                <h2>🖨️ Impresión de Códigos de Barras</h2>
+                <h2>🖨️ Impresión de Códigos de Barra</h2>
                 <p>Selecciona los productos para imprimir sus códigos de barras</p>
             </div>
 
