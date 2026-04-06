@@ -23,7 +23,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="es">
+    <html lang="es" data-scroll-behavior="smooth">
       <body className={`${poppins.variable} ${luckiestGuy.variable}`}>{children}</body>
     </html>
   );

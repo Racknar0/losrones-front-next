@@ -46,7 +46,7 @@ axiosInstance.interceptors.response.use(
         localStorage.removeItem('token'); // Elimina el token
         localStorage.removeItem('selectedStore'); // Elimina el usuario
         document.cookie = 'auth_token=; Path=/; Max-Age=0; SameSite=Lax';
-        window.location.href = '/'; // Redirige al login
+        window.location.href = '/login'; // Redirige al login
       }
 
     } else if (error.request) {

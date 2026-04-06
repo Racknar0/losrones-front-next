@@ -4,7 +4,7 @@ export function middleware(request) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get('auth_token')?.value;
 
-  const isLoginPath = pathname === '/';
+  const isLoginPath = pathname === '/login';
   const isDashboardRoute = pathname.startsWith('/dashboard');
 
   // Si no hay sesión, no permitir dashboard
@@ -25,5 +25,5 @@ export function middleware(request) {
 }
 
 export const config = {
-  matcher: ['/', '/dashboard/:path*'],
+  matcher: ['/login', '/dashboard/:path*'],
 };

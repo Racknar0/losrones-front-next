@@ -30,7 +30,7 @@ const Layout = ({ children }) => {
   useEffect(() => {
     if (!mounted) return;
     if (!token) {
-      router.replace('/');
+      router.replace('/login');
     }
   }, [mounted, token, router]);
 
@@ -50,7 +50,7 @@ const Layout = ({ children }) => {
         if (!confirmLogout) return; // Si el usuario cancela, no hacemos nada
 
         await logout(); // Limpia store, localStorage y cookie de auth
-        router.replace('/');
+        router.replace('/login');
         
     };
 
