@@ -202,39 +202,67 @@
 
 /* Estilos para impresión */
 @media print {
-    .no-print {
+    @page {
+        margin: 8mm;
+    }
+
+    body.barcode-print-mode .container_layout > .header,
+    body.barcode-print-mode .container_layout .ps-sidebar-root,
+    body.barcode-print-mode .container_layout .sidebar_header,
+    body.barcode-print-mode .container_layout .sidebar_footer,
+    body.barcode-print-mode .container_layout .collapse_btn,
+    body.barcode-print-mode .barcode-printer .header,
+    body.barcode-print-mode .barcode-printer .preview-actions,
+    body.barcode-print-mode .no-print {
         display: none !important;
     }
 
-    .barcode-printer {
-        padding: 0;
-        max-width: none;
+    body.barcode-print-mode .container_layout,
+    body.barcode-print-mode .container_layout .main_wrapper,
+    body.barcode-print-mode .container_layout .main_content {
+        display: block !important;
+        height: auto !important;
+        min-height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+    }
 
-        .print-content {
-            .barcodes-grid {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 10px;
-                padding: 10px;
+    body.barcode-print-mode .barcode-printer {
+        padding: 0 !important;
+        margin: 0 !important;
+        max-width: none !important;
+    }
 
-                .barcode-label {
-                    border: 1px solid #000;
-                    margin-bottom: 10px;
-                    padding: 8px;
+    body.barcode-print-mode .barcode-printer .print-content {
+        position: static !important;
+        width: 100% !important;
+    }
 
-                    .product-name {
-                        font-size: 10px;
-                    }
+    body.barcode-print-mode .barcode-printer .barcodes-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        padding: 8px;
+    }
 
-                    .product-code {
-                        font-size: 8px;
-                    }
+    body.barcode-print-mode .barcode-printer .barcode-label {
+        border: 1px solid #000;
+        margin-bottom: 10px;
+        padding: 8px;
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
 
-                    .product-price {
-                        font-size: 12px;
-                    }
-                }
-            }
-        }
+    body.barcode-print-mode .barcode-printer .barcode-label .product-name {
+        font-size: 10px;
+    }
+
+    body.barcode-print-mode .barcode-printer .barcode-label .product-code {
+        font-size: 8px;
+    }
+
+    body.barcode-print-mode .barcode-printer .barcode-label .product-price {
+        font-size: 12px;
     }
 
     body {

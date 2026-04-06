@@ -19,7 +19,7 @@ const SelectMetodoPago = ({
                     }`}
                     onClick={() => setTipoPago('tarjeta')}
                 >
-                    <CardIcon width="40" height="40" />
+                    <CardIcon width="46" height="46" />
                     <p>Tarjeta</p>
                 </button>
                 <button
@@ -28,7 +28,7 @@ const SelectMetodoPago = ({
                     }`}
                     onClick={() => setTipoPago('efectivo')}
                 >
-                    <CashIcon width="40" height="40" />
+                    <CashIcon width="46" height="46" />
                     <p>Efectivo</p>
                 </button>
                 <button
@@ -37,7 +37,7 @@ const SelectMetodoPago = ({
                     }`}
                     onClick={() => setTipoPago('transferencia')}
                 >
-                    <TransferIcon width="40" height="40" />
+                    <TransferIcon width="46" height="46" />
                     <p>Transferencia</p>
                 </button>
             </div>

@@ -20,6 +20,19 @@ const BarcodePrinter = () => {
         fetchProducts();
     }, [selectedStore]);
 
+    useEffect(() => {
+        const handleAfterPrint = () => {
+            document.body.classList.remove('barcode-print-mode');
+        };
+
+        window.addEventListener('afterprint', handleAfterPrint);
+
+        return () => {
+            window.removeEventListener('afterprint', handleAfterPrint);
+            document.body.classList.remove('barcode-print-mode');
+        };
+    }, []);
+
     const fetchProducts = async () => {
         setLoading(true);
         try {
@@ -109,6 +122,7 @@ const BarcodePrinter = () => {
         
         // Esperar a que se generen los códigos de barras y luego imprimir
         setTimeout(() => {
+            document.body.classList.add('barcode-print-mode');
             window.print();
         }, 500);
     };

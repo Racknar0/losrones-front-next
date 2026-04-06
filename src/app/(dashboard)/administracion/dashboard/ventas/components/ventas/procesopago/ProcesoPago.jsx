@@ -1,7 +1,6 @@
-import React, { use, useEffect, useState } from 'react';
-import { CouponIcon } from '@admin-shared/icons/CouponIcon';
+import React, { useEffect, useState } from 'react';
 import useStore from '@store/useStore';
-import { confirmAlert, errorAlert, successAlert, timerAlert } from '@helpers/alerts';
+import { confirmAlert, errorAlert, timerAlert } from '@helpers/alerts';
 import TotalValue from '../totalValue/TotalValue';
 import CuponTotal from '../cuponTotal/CuponTotal';
 import SelectMetodoPago from '../selectMetodoPago/SelectMetodoPago';
@@ -64,7 +63,8 @@ const ProcesoPago = ({
 
     const handleCuponChange = (e) => {
         setSelectedCoupon(null);
-        const value = e.target.value;
+        const value = e.target.value.trim().toUpperCase();
+        setCupon(value);
         const cuponEncontrado = cupones.find((cupon) => cupon.code === value);
         if (cuponEncontrado) {
             setSelectedCoupon(cuponEncontrado);
@@ -72,6 +72,11 @@ const ProcesoPago = ({
             setSelectedCoupon(null);
         }
     }
+
+    const handleSelectGlobalCoupon = (coupon) => {
+        setCupon(coupon.code);
+        setSelectedCoupon(coupon);
+    };
 
 
     const hadleFinalizarVenta = async () => {
@@ -158,6 +163,7 @@ const ProcesoPago = ({
                 cupon={cupon}
                 setCupon={setCupon}
                 handleCuponChange={handleCuponChange}
+                onSelectCoupon={handleSelectGlobalCoupon}
             />
 
             {/* Componente para seleccionar el método de pago */}
@@ -183,7 +189,7 @@ const ProcesoPago = ({
                         <Spinner loading={loading} color="#6564d8" styles={{ marginTop: '40px' }} />
                     ) : (
                         <button className="d-flex btn_finalizar_venta mt-4 mx-auto" onClick={hadleFinalizarVenta}>
-                            <CashIcon className="icono_cupon" />
+                            <CashIcon className="icon_finalizar_venta" />
                             <p>Finalizar venta</p>
                         </button>
                     )

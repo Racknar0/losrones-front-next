@@ -5,6 +5,7 @@ import useStore from '@store/useStore';
 import PlusIcon from '@admin-shared/icons/PlusIcon';
 import Modal from '@admin-shared/modal/Modal';
 import HttpService from '@services/HttpService';
+import useChunkedVirtualizedList from '@helpers/useChunkedVirtualizedList';
 
 
 const SaleSearch = ({
@@ -22,6 +23,18 @@ const SaleSearch = ({
   const setCupones = useStore((state) => state.setCupones);
   const [loadingCupones, setLoadingCupones] = useState(false);
   const [showModal , setShowModal] = useState(false);
+
+  const {
+    visibleItems: visibleProducts,
+    visibleCount,
+    totalCount,
+    hasMore,
+    loaderRef,
+    loadMore,
+  } = useChunkedVirtualizedList(filteredProducts, {
+    batchSize: 20,
+    resetKey: `${searchTerm}|${filteredProducts.length}`,
+  });
 
   //Obtener los cupones de la tienda
   useEffect(() => {
@@ -54,17 +67,22 @@ const SaleSearch = ({
   }
 
   return (
-      <div className=" border-end buscador_container">
+      <div className=" border-end buscador_container ventas_buscador_container">
           <button className="btn_open_coupons" onClick={() => {setShowModal(true)}}>
             🏷️ Ver cupones
           </button>
           <h5>📦 Listado de productos</h5>
           <input className="form-control mb-2 form_buscador" placeholder="🔎 Buscar..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+          {!loadingProducts && totalCount > 0 && (
+            <div className="products-counter">
+              Mostrando {visibleCount} de {totalCount}
+            </div>
+          )}
           <ul className="list-group">
             {loadingProducts ? (
               <div className='spinner_container'> <Spinner color="#6564d8" /> </div>
-            ) : filteredProducts.length ? (
-              filteredProducts.map((prod) => (
+            ) : visibleProducts.length ? (
+              visibleProducts.map((prod) => (
                 <li
                   key={prod.id}
                   className={`list-group-item list-group-item-action`}
@@ -97,6 +115,14 @@ const SaleSearch = ({
               ))
             ) : (
               <li className="list-group-item">No se encontraron productos</li>
+            )}
+
+            {!loadingProducts && hasMore && (
+              <li className="list-group-item list-group-item-loading" ref={loaderRef}>
+                <button type="button" className="btn btn-sm btn-outline-secondary" onClick={loadMore}>
+                  Cargar más productos
+                </button>
+              </li>
             )}
           </ul>
 

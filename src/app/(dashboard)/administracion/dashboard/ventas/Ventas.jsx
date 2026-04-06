@@ -160,7 +160,7 @@ const Ventas = () => {
 
     return (
         <div className="container-fluid mt-4 main_container">
-            <h1 className="text-center mb-5">
+            <h1 className="text-center mb-1 fs-2">
                 {dataCambio?.cambioActivo === true
                     ? 'Panel de Cambio'
                     : 'Panel de Ventas'}

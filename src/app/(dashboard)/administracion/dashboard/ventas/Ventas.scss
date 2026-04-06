@@ -1,5 +1,18 @@
 .main_container{
 
+    .row.bg-light {
+        align-items: stretch;
+    }
+
+    .row.bg-light > .col-md-4 {
+        display: flex;
+    }
+
+    .row.bg-light > .col-md-4 > .buscador_container {
+        width: 100%;
+        min-height: 0;
+    }
+
     .modal {
         display: flex !important;
         align-items: center !important;
@@ -16,6 +29,12 @@
         }
 
         
+    }
+
+    @media (max-width: 767.98px) {
+        .row.bg-light > .col-md-4 {
+            display: block;
+        }
     }
     
 }

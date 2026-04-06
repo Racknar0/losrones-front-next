@@ -1,9 +1,12 @@
-.buscador_container{
+.ventas_buscador_container{
     
     padding: 15px;
     background-color: #f8f9fa;
     border-radius: 5px;
-    min-height: 100vh;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 
     .spinner_container_btn{
         height: 50px;
@@ -38,13 +41,19 @@
         font-size: 1.6rem;
     }
 
+    .products-counter {
+        font-size: 1.15rem;
+        color: #5f5c74;
+        margin-bottom: 8px;
+        font-weight: 500;
+    }
+
     .list-group{
         
         margin-top: 10px;
-        max-height: 7cqb;
+        flex: 1 1 auto;
+        min-height: 0;
         overflow-y: auto;
-
-        max-height: 700px;
 
         .spinner_container{
             min-height: 100px;
@@ -149,6 +158,42 @@
                 }
             }
         }
+
+        .list-group-item-loading {
+            justify-content: center;
+            padding: 12px;
+            border: none;
+            background: transparent;
+
+            .btn {
+                font-size: 1.2rem;
+            }
+        }
+    }
+}
+
+@media (min-width: 768px) {
+    .ventas_buscador_container {
+        min-height: 0;
+        height: auto;
+        width: 100%;
+    }
+
+    .ventas_buscador_container .list-group {
+        flex: 0 1 auto;
+        min-height: 0;
+        max-height: min(90vh, 800px);
+        overflow-y: auto;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .ventas_buscador_container {
+        overflow: visible;
+    }
+
+    .ventas_buscador_container .list-group {
+        max-height: 700px;
     }
 }
 
@@ -158,7 +203,7 @@
    
 
   
-  .cupones_container {
+.ventas_buscador_container .cupones_container {
     display: grid;
     gap: 1.5rem;
     max-height: 55vh;
@@ -175,7 +220,7 @@
     }
   }
   
-  .cupon {
+.ventas_buscador_container .cupon {
     position: relative;
     background: #fff;
     border-left: 6px solid #6564d8;
@@ -219,7 +264,7 @@
   }
   
   /* Si quieres un footer limpio sin borde ni fondo */
-  .modal-footer {
+.ventas_buscador_container .modal-footer {
     border-top: none;
     background: transparent;
     padding: 0 1.5rem 1.5rem;
