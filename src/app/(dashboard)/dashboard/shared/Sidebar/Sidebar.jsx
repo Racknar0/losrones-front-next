@@ -87,12 +87,12 @@ const menuConfig = {
     },
     // Apartados: {
     //     roles: ['1'],
-    //     path: '/administracion/dashboard/apartados',
+    //     path: '/dashboard/apartados',
     //     icon: <ApartadoIcon width={40} height={40} />,
     // },
     // 'Cambio Tienda': {
     //     roles: ['1'],
-    //     path: '/administracion/dashboard/cambio-tienda',
+    //     path: '/dashboard/cambio-tienda',
     //     icon: <CambioIcon width={40} height={40} />,
     // },
 };

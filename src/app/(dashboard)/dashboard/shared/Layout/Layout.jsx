@@ -1,30 +1,42 @@
+"use client";
+
 import React, { useEffect, useState } from 'react';
-import { Outlet } from 'react-router'; 
-import Sidebar from '../../../components/Sidebar/Sidebar';
+import Sidebar from '@admin-shared/Sidebar/Sidebar';
 import './Layout.scss'; 
-import { confirmAlert } from '../../../helpers/alerts';
-import { CollapseIcon } from '../../../components/icons/CollapseIcon';
-import userImage from '../../../assets/user.png'; // Importa la imagen del usuario desde la carpeta de assets
-import { getAssetSrc } from '../../../helpers/assetSrc';
-import useStore from '../../../store/useStore';
+import { confirmAlert } from '@helpers/alerts';
+import { CollapseIcon } from '@admin-shared/icons/CollapseIcon';
+import userImage from '@assets/user.png'; // Importa la imagen del usuario desde la carpeta de assets
+import { getAssetSrc } from '@helpers/assetSrc';
+import useStore from '@store/useStore';
+import { useRouter } from 'next/navigation';
 
-const Layout = () => {
+const Layout = ({ children }) => {
 
+  const [mounted, setMounted] = useState(false);
   const [toggled, setToggled] = useState(false);
   const [broken, setBroken] = useState(false); // Estado para manejar el colapso del sidenav en pantallas pequeñas
+  const router = useRouter();
+  const token = useStore((state) => state.token);
   const jwtData = useStore((state) => state.jwtData);
   const logout = useStore((state) => state.logout);
 
   useEffect(() => {
+    setMounted(true);
     if (typeof window !== 'undefined') {
       setBroken(window.matchMedia('(max-width: 768px)').matches);
     }
   }, []);
 
-  const fullState = useStore((state) => state);
   useEffect(() => {
-    console.log('Estado completo del store:', fullState);
-  }, [fullState]);
+    if (!mounted) return;
+    if (!token) {
+      router.replace('/');
+    }
+  }, [mounted, token, router]);
+
+  if (!mounted || !token || !jwtData) {
+    return null;
+  }
 
 
     const handleLogout = async () => {
@@ -37,11 +49,8 @@ const Layout = () => {
 
         if (!confirmLogout) return; // Si el usuario cancela, no hacemos nada
 
-        logout(); // Llama a la función de cierre de sesión del store
-        // Borrar localStorage o realizar cualquier acción de cierre de sesión aquí
-        localStorage.removeItem('token');
-        // Recargar la página 
-        // window.location.reload();
+        await logout(); // Limpia store, localStorage y cookie de auth
+        router.replace('/');
         
     };
 
@@ -57,30 +66,28 @@ const Layout = () => {
           </h1>
         </div>
 
-        <div className="header_user_container">
-                <div className='image_logouser_container'>
-                    <img className='image_logouser' src={
-                      jwtData?.userImage ? `${process.env.NEXT_PUBLIC_BACK_HOST}/${jwtData.userImage}` : getAssetSrc(userImage)
-                    } alt="Logo de usuario" />
-                </div>
-                <div className='user_info_container'>
-                    <div className='user_name_container'>
-                        <p className='user_name'>
-                          {jwtData?.username || 'Usuario no disponible'}
-                        </p>
-                    </div>
-                    <div className='user_role_container'>
-                        <p className='user_role'>
-                          {
-                            jwtData?.role || 'Rol no disponible'
-                          }
-                        </p>
-                    </div>
-                </div>
-          </div>
-
-
         <div className='header_right_container'>
+          <div className="header_user_container">
+                  <div className='image_logouser_container'>
+                      <img className='image_logouser' src={
+                        jwtData?.userImage ? `${process.env.NEXT_PUBLIC_BACK_HOST}/${jwtData.userImage}` : getAssetSrc(userImage)
+                      } alt="Logo de usuario" />
+                  </div>
+                  <div className='user_info_container'>
+                      <div className='user_name_container'>
+                          <p className='user_name'>
+                            {jwtData?.username || 'Usuario no disponible'}
+                          </p>
+                      </div>
+                      <div className='user_role_container'>
+                          <p className='user_role'>
+                            {
+                              jwtData?.role || 'Rol no disponible'
+                            }
+                          </p>
+                      </div>
+                  </div>
+            </div>
           <button className="logout_btn" onClick={handleLogout}> Desconectar </button>
           {broken && ( 
             <button 
@@ -109,8 +116,7 @@ const Layout = () => {
 
         {/* Contenido dinámico basado en las rutas */}
         <div className="main_content">
-          {/* Este es el lugar donde se renderiza el contenido dependiendo de la ruta */}
-          <Outlet />
+          {children}
         </div>
       </div>
     </div>

@@ -4,20 +4,20 @@ export function middleware(request) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get('auth_token')?.value;
 
-  const isAdminLogin = pathname === '/administracion';
-  const isAdminDashboard = pathname.startsWith('/administracion/dashboard');
+  const isLoginPath = pathname === '/';
+  const isDashboardRoute = pathname.startsWith('/dashboard');
 
   // Si no hay sesión, no permitir dashboard
-  if (isAdminDashboard && !token) {
+  if (isDashboardRoute && !token) {
     const url = request.nextUrl.clone();
-    url.pathname = '/administracion';
+    url.pathname = '/';
     return NextResponse.redirect(url);
   }
 
   // Si ya hay sesión, evitar quedarse en login
-  if (isAdminLogin && token) {
+  if (isLoginPath && token) {
     const url = request.nextUrl.clone();
-    url.pathname = '/administracion/dashboard/reportes';
+    url.pathname = '/dashboard/reportes';
     return NextResponse.redirect(url);
   }
 
@@ -25,5 +25,5 @@ export function middleware(request) {
 }
 
 export const config = {
-  matcher: ['/administracion', '/administracion/:path*'],
+  matcher: ['/', '/dashboard/:path*'],
 };
