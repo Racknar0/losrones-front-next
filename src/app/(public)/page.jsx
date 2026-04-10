@@ -1,16 +1,8 @@
-import Link from 'next/link';
-import './page.scss';
-
-export default function PublicPage() {
+export default function HomePage() {
   return (
-    <main className="public_home">
-      <section className="public_home_card">
-        <h1>Losrones Web</h1>
-        <p>Sitio publico de Losrones.</p>
-        <Link href="/login" className="public_login_link">
-          Ir a iniciar sesion
-        </Link>
-      </section>
-    </main>
+    <section style={{ padding: '4rem 2rem', textAlign: 'center' }}>
+      <h1>Inicio</h1>
+      <p>Bienvenido a Losrones — Página de inicio</p>
+    </section>
   );
 }
