@@ -1,9 +1,9 @@
 import './TestimonialsSection.scss';
 
 const TESTIMONIALS = [
-  { name: 'María López', role: 'Dueña de Max', text: 'Desde que cambiamos a Losrones, Max tiene más energía y su pelaje brilla como nunca. ¡100% recomendado!', initials: 'ML' },
-  { name: 'Carlos Rivera', role: 'Dueño de Luna', text: 'La calidad de los ingredientes se nota de inmediato. Luna adora cada bocado y su digestión mejoró mucho.', initials: 'CR' },
-  { name: 'Ana Martínez', role: 'Dueña de Rocky', text: 'Probamos muchas marcas antes, pero Losrones es la única que Rocky come sin dejar sobras. Excelente servicio.', initials: 'AM' },
+  { name: 'María López', role: 'Mamá de Max (Golden)', text: 'Encontré todo lo que necesitaba: alimento premium, una cama ortopédica y juguetes. Max está feliz y yo también. ¡La mejor tienda de mascotas!', initials: 'ML' },
+  { name: 'Carlos Rivera', role: 'Papá de Luna (Husky)', text: 'El envío fue súper rápido y la calidad de los productos es increíble. La correa deportiva que compré es perfecta para nuestras caminatas.', initials: 'CR' },
+  { name: 'Ana Martínez', role: 'Mamá de Michi (Gato Persa)', text: 'Por fin una tienda que tiene variedad para gatos. Los juguetes con catnip volvieron loco a Michi y el alimento es de primera. Totalmente recomendada.', initials: 'AM' },
 ];
 
 const TestimonialsSection = () => {
@@ -11,7 +11,7 @@ const TestimonialsSection = () => {
     <section className="testimonials" id="testimonials">
       <div className="testimonials__container">
         <p className="testimonials__eyebrow">Testimonios</p>
-        <h2 className="testimonials__title">Lo Que Dicen Nuestros Clientes</h2>
+        <h2 className="testimonials__title">Familias que nos Eligen</h2>
 
         <div className="testimonials__grid">
           {TESTIMONIALS.map((t, idx) => (

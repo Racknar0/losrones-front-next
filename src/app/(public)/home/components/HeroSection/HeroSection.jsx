@@ -9,31 +9,31 @@ const HeroSection = () => {
 
       <div className="hero__container">
         <div className="hero__content">
-          <span className="hero__badge">Alimento Natural Premium</span>
+          <span className="hero__badge">Tu Pet Shop de Confianza</span>
           <h1 className="hero__title">
-            Porque cada bocado debe ser <span>puro</span>.
+            Todo para tu mascota en un solo <span>lugar</span>.
           </h1>
           <p className="hero__description">
-            En Losrones elaboramos alimentos naturales y nutritivos para que tu
-            mascota viva más sana y feliz. Ingredientes reales, sin conservantes
-            artificiales.
+            Alimento premium, juguetes irresistibles, accesorios y todo lo que tu
+            mejor amigo necesita para ser feliz. Calidad garantizada con envío a
+            todo México.
           </p>
           <Link href="/productos" className="hero__cta">
-            Ver Productos <span className="hero__cta-arrow">→</span>
+            Explorar Tienda <span className="hero__cta-arrow">→</span>
           </Link>
         </div>
 
         <div className="hero__image-wrapper">
           <div className="hero__floating-badge hero__floating-badge--top">
             <span className="hero__floating-icon hero__floating-icon--yellow">🐾</span>
-            100% Natural
+            +500 Productos
           </div>
           <div className="hero__image-blob">
             <div className="hero__image-placeholder">📷 Imagen de mascota</div>
           </div>
           <div className="hero__floating-badge hero__floating-badge--bottom">
             <span className="hero__floating-icon hero__floating-icon--pink">❤️</span>
-            +5,000 clientes felices
+            +5,000 mascotas felices
           </div>
         </div>
       </div>

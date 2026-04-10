@@ -2,22 +2,22 @@ import './WhyUsSection.scss';
 
 const WHY_US_ITEMS = [
   {
-    icon: '🌿',
+    icon: '🛍️',
     color: 'pink',
-    title: 'Ingredientes Naturales',
-    text: 'Solo utilizamos ingredientes reales y naturales. Sin aditivos ni conservantes artificiales en ninguna de nuestras fórmulas.',
+    title: 'Todo en un Solo Lugar',
+    text: 'Alimento, juguetes, camas, correas, higiene y más. No necesitas ir a otra tienda, aquí encuentras todo para tu mascota.',
   },
   {
     icon: '🚚',
     color: 'yellow',
-    title: 'Envío Express',
-    text: 'Recibe tu pedido en 24-48 horas. Envío gratis en compras mayores a $50. Tu mascota no puede esperar.',
+    title: 'Envío Rápido y Gratis',
+    text: 'Recibe tu pedido en 24-48 horas. Envío gratis en compras mayores a $50. Porque tu mascota no puede esperar.',
   },
   {
-    icon: '🏥',
+    icon: '💛',
     color: 'plum',
-    title: 'Aprobado por Veterinarios',
-    text: 'Nuestras fórmulas son desarrolladas y aprobadas por veterinarios especialistas en nutrición animal.',
+    title: 'Atención Personalizada',
+    text: 'Nuestro equipo de amantes de las mascotas te asesora para elegir lo mejor según la raza, edad y necesidades de tu compañero.',
   },
 ];
 
@@ -26,7 +26,7 @@ const WhyUsSection = () => {
     <section className="why-us" id="why-us">
       <div className="why-us__container">
         <p className="why-us__eyebrow">¿Por Qué Elegirnos?</p>
-        <h2 className="why-us__title">Lo Que Nos Hace Diferentes</h2>
+        <h2 className="why-us__title">La Tienda Favorita de las Mascotas</h2>
 
         <div className="why-us__grid">
           {WHY_US_ITEMS.map((item, idx) => (

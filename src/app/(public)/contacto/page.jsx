@@ -1,8 +1,7 @@
-export default function ContactoPage() {
-  return (
-    <section style={{ padding: '4rem 2rem', textAlign: 'center' }}>
-      <h1>Contacto</h1>
-      <p>Página de contacto</p>
-    </section>
-  );
+'use client';
+
+import Contacto from './Contacto';
+
+export default function Page() {
+  return <Contacto />;
 }

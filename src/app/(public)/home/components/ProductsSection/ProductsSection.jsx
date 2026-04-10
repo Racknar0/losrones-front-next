@@ -3,9 +3,9 @@ import './ProductsSection.scss';
 
 const PRODUCTS = [
   { slug: 'alimento-premium-pollo', name: 'Alimento Premium Pollo', price: 24.99, originalPrice: 32.99, rating: 5 },
-  { slug: 'snack-natural-carne', name: 'Snack Natural de Carne', price: 12.50, originalPrice: 16.00, rating: 4 },
-  { slug: 'mix-vegetales-perro', name: 'Mix de Vegetales', price: 18.99, originalPrice: 22.99, rating: 5 },
-  { slug: 'omega-fish-blend', name: 'Omega Fish Blend', price: 29.99, originalPrice: 36.99, rating: 4 },
+  { slug: 'pelota-indestructible', name: 'Pelota Indestructible', price: 9.99, originalPrice: 13.99, rating: 5 },
+  { slug: 'cama-ortopedica', name: 'Cama Ortopédica Premium', price: 45.99, originalPrice: 59.99, rating: 5 },
+  { slug: 'correa-ajustable-sport', name: 'Correa Ajustable Sport', price: 18.99, originalPrice: 24.99, rating: 4 },
 ];
 
 const Stars = ({ count = 5, max = 5 }) => (
@@ -21,15 +21,15 @@ const ProductsSection = () => {
     <section className="products" id="products">
       <div className="products__container">
         <div className="products__header">
-          <p className="products__eyebrow">Nuestros Productos</p>
-          <h2 className="products__title">Las Mejores Opciones</h2>
+          <p className="products__eyebrow">Lo Más Vendido</p>
+          <h2 className="products__title">Favoritos de Nuestros Clientes</h2>
         </div>
 
         <div className="products__filters">
           <button className="products__filter-btn products__filter-btn--active">Todos</button>
-          <button className="products__filter-btn">Vegetales</button>
-          <button className="products__filter-btn">Pescado</button>
-          <button className="products__filter-btn">Carne</button>
+          <button className="products__filter-btn">Alimento</button>
+          <button className="products__filter-btn">Juguetes</button>
+          <button className="products__filter-btn">Accesorios</button>
         </div>
 
         <div className="products__grid">

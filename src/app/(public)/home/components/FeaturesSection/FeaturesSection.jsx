@@ -5,21 +5,21 @@ const FeaturesSection = () => {
     <section className="features" id="features">
       <div className="features__container">
         <div className="features__card features__card--pink">
-          <span className="features__eyebrow">Nuestra Promesa</span>
-          <h2 className="features__card-title">Traemos el mejor alimento</h2>
+          <span className="features__eyebrow">Variedad Única</span>
+          <h2 className="features__card-title">Miles de productos en un solo lugar</h2>
           <p className="features__card-text">
-            Seleccionamos cuidadosamente cada ingrediente para garantizar la
-            máxima calidad y nutrición para tu mascota.
+            Desde alimento premium hasta juguetes, camas, accesorios y productos
+            de higiene. Todo lo que tu mascota necesita, siempre disponible.
           </p>
           <div className="features__card-image">📷 Imagen</div>
         </div>
 
         <div className="features__card features__card--yellow">
-          <span className="features__eyebrow">Calidad Garantizada</span>
-          <h2 className="features__card-title">Lo mejor para tu compañero</h2>
+          <span className="features__eyebrow">Asesoría Experta</span>
+          <h2 className="features__card-title">Te ayudamos a elegir lo ideal</h2>
           <p className="features__card-text">
-            Fórmulas desarrolladas por veterinarios y nutricionistas para
-            cada etapa de vida de tu mascota.
+            Nuestro equipo de expertos en mascotas te guía para encontrar los
+            productos perfectos según la raza, edad y necesidades de tu compañero.
           </p>
           <div className="features__card-image">📷 Imagen</div>
         </div>

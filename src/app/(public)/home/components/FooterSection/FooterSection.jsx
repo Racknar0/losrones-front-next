@@ -8,8 +8,8 @@ const FooterSection = () => {
         <div>
           <div className="footer__brand-name">Losrones</div>
           <p className="footer__brand-desc">
-            Alimentos naturales y nutritivos para mascotas felices.
-            Comprometidos con la salud de tu mejor amigo desde el primer bocado.
+            Tu tienda de mascotas favorita en México. Alimento, juguetes,
+            accesorios y todo lo que tu compañero peludo necesita para ser feliz.
           </p>
         </div>
 

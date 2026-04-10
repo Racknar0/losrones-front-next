@@ -20,13 +20,13 @@ const PromoSection = () => {
 
         <div className="promo__content">
           <span className="promo__discount">Ahorra 20%</span>
-          <h2 className="promo__title">La mejor nutrición para tu mejor amigo</h2>
+          <h2 className="promo__title">Consiente a tu mascota con lo mejor</h2>
           <p className="promo__text">
-            Aprovecha nuestra oferta especial en alimentos premium. Porque tu
-            mascota merece lo mejor sin que tu bolsillo sufra.
+            Aprovecha nuestra oferta en alimento, juguetes y accesorios.
+            Todo lo que necesitas para que tu compañero peludo viva su mejor vida.
           </p>
           <Link href="/productos" className="promo__cta">
-            Comprar Ahora <span>→</span>
+            Ver Ofertas <span>→</span>
           </Link>
         </div>
       </div>
