@@ -26,7 +26,7 @@ export default function Page() {
 
   useEffect(() => {
     if (token) {
-      router.push('/dashboard/reportes');
+      router.replace('/dashboard/reportes');
     }
   }, [token, router]);
 
@@ -51,8 +51,6 @@ export default function Page() {
       fetchTiendas();
     }
   }, [token]);
-
-  if (token) return null;
 
   const handleSubmit = (e) => {
     e.preventDefault();

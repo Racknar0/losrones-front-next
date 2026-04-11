@@ -1,12 +1,15 @@
 'use client';
 
 import { useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import Navbar from './shared/Navbar/Navbar';
 import CartSidebar from './shared/CartSidebar/CartSidebar';
 import usePublicCart from '@store/usePublicCart';
 
 export default function PublicLayout({ children }) {
   const hydrate = usePublicCart((s) => s.hydrate);
+  const pathname = usePathname();
+  const isLoginRoute = pathname === '/login';
 
   useEffect(() => {
     hydrate();
@@ -14,8 +17,8 @@ export default function PublicLayout({ children }) {
 
   return (
     <>
-      <Navbar />
-      <CartSidebar />
+      {!isLoginRoute && <Navbar />}
+      {!isLoginRoute && <CartSidebar />}
       <main className="public-main">
         {children}
       </main>

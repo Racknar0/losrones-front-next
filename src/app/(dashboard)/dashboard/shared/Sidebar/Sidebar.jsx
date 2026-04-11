@@ -45,6 +45,11 @@ const menuConfig = {
         path: '/dashboard/productos',
         icon: <ProductIcon width={40} height={40} />,
     },
+    Store: {
+        roles: ['2'],
+        path: '/dashboard/store',
+        icon: <ProductIcon width={40} height={40} />,
+    },
     Stock: {
         roles: ['1', '2', '3'],
         path: '/dashboard/stock',

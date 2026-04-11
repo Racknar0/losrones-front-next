@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import './HeroSection.scss';
+import Image from 'next/image';
+import perroHero from '@assets/perro_hero.png';
 
 const HeroSection = () => {
   return (
@@ -29,7 +31,15 @@ const HeroSection = () => {
             +500 Productos
           </div>
           <div className="hero__image-blob">
-            <div className="hero__image-placeholder">📷 Imagen de mascota</div>
+            <div className="hero__image-placeholder">
+              <Image
+                src={perroHero}
+                alt="Mascota feliz con productos de la tienda"
+                width={400}
+                height={400}
+                className="hero__image"
+              />
+            </div>
           </div>
           <div className="hero__floating-badge hero__floating-badge--bottom">
             <span className="hero__floating-icon hero__floating-icon--pink">❤️</span>
