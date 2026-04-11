@@ -37,6 +37,7 @@ const HeroSection = () => {
                 alt="Mascota feliz con productos de la tienda"
                 width={400}
                 height={400}
+                loading="eager"
                 className="hero__image"
               />
             </div>

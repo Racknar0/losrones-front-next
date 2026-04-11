@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 $dark-plum: #3B001B;
 $soft-pink: #EF98C1;
 $warm-yellow: #FFBA30;
@@ -195,7 +197,7 @@ $deep-accent: #5C1A3A;
     &--whatsapp {
       background: #25D366;
       color: #fff;
-      &:hover { background: darken(#25D366, 6%); }
+      &:hover { background: color.adjust(#25D366, $lightness: -6%); }
     }
   }
 }

@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 $dark-plum: #3B001B;
 $soft-pink: #EF98C1;
 $warm-yellow: #FFBA30;
@@ -181,7 +183,7 @@ $deep-accent: #5C1A3A;
   &__card-image {
     width: 100%;
     height: 200px;
-    background: linear-gradient(135deg, lighten($cream, 2%) 0%, $cream 100%);
+    background: linear-gradient(135deg, color.adjust($cream, $lightness: 2%) 0%, $cream 100%);
     display: flex;
     align-items: center;
     justify-content: center;

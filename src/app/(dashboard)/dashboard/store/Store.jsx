@@ -39,6 +39,17 @@ const Store = () => {
   const [savingItem, setSavingItem] = useState(false);
   const [savingCategory, setSavingCategory] = useState(false);
 
+  const [favoriteBlockCategories, setFavoriteBlockCategories] = useState([]);
+  const [favoriteCategoryProducts, setFavoriteCategoryProducts] = useState([]);
+  const [favoriteCategoryDraftId, setFavoriteCategoryDraftId] = useState('');
+  const [favoriteProductsSearch, setFavoriteProductsSearch] = useState('');
+  const [selectedFavoriteCategoryId, setSelectedFavoriteCategoryId] = useState(null);
+  const [selectedFavoriteProductIds, setSelectedFavoriteProductIds] = useState([]);
+  const [loadingFavoriteCategories, setLoadingFavoriteCategories] = useState(false);
+  const [loadingFavoriteProducts, setLoadingFavoriteProducts] = useState(false);
+  const [savingFavoriteCategory, setSavingFavoriteCategory] = useState(false);
+  const [savingFavoriteProducts, setSavingFavoriteProducts] = useState(false);
+
   const [categoryDraft, setCategoryDraft] = useState('');
   const [editingCategoryId, setEditingCategoryId] = useState(null);
 
@@ -96,14 +107,82 @@ const Store = () => {
     }
   };
 
+  const loadFavoriteBlockCategories = async (preferredCategoryId = null) => {
+    try {
+      setLoadingFavoriteCategories(true);
+      const response = await httpService.getData('/store-items/favorites/categories');
+
+      if (response.status === 200) {
+        const categories = response.data || [];
+        setFavoriteBlockCategories(categories);
+
+        setSelectedFavoriteCategoryId((previousId) => {
+          const candidateId = preferredCategoryId ?? previousId;
+          const exists = categories.some((category) => category.id === candidateId);
+
+          if (candidateId && exists) {
+            return candidateId;
+          }
+
+          return categories[0]?.id || null;
+        });
+      }
+    } catch (error) {
+      console.error('Error loading favorite block categories:', error);
+      errorAlert('Error', 'No se pudieron cargar las categorias del bloque favoritos');
+    } finally {
+      setLoadingFavoriteCategories(false);
+    }
+  };
+
+  const loadFavoriteCategoryProducts = async (favoriteCategoryId) => {
+    if (!favoriteCategoryId) {
+      setFavoriteCategoryProducts([]);
+      setSelectedFavoriteProductIds([]);
+      return;
+    }
+
+    try {
+      setLoadingFavoriteProducts(true);
+      const response = await httpService.getData(`/store-items/favorites/categories/${favoriteCategoryId}/products`);
+
+      if (response.status === 200) {
+        const products = response.data?.products || [];
+        setFavoriteCategoryProducts(products);
+        setSelectedFavoriteProductIds(products.filter((product) => product.isSelected).map((product) => product.id));
+      }
+    } catch (error) {
+      console.error('Error loading favorite category products:', error);
+      errorAlert('Error', 'No se pudieron cargar los productos de la categoria favorita');
+    } finally {
+      setLoadingFavoriteProducts(false);
+    }
+  };
+
   const loadAll = async () => {
-    await Promise.all([loadSourceProducts(), loadStoreItems(), loadStoreCategories()]);
+    await Promise.all([
+      loadSourceProducts(),
+      loadStoreItems(),
+      loadStoreCategories(),
+    ]);
   };
 
   useEffect(() => {
     loadAll();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (activeTab !== 'favorites') return;
+    loadFavoriteCategoryProducts(selectedFavoriteCategoryId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab, selectedFavoriteCategoryId]);
+
+  useEffect(() => {
+    if (activeTab !== 'favorites') return;
+    loadFavoriteBlockCategories(selectedFavoriteCategoryId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab]);
 
   const filteredSourceProducts = useMemo(() => {
     const term = sourceSearch.trim().toLowerCase();
@@ -132,6 +211,29 @@ const Store = () => {
       );
     });
   }, [storeItems, itemsSearch]);
+
+  const availableFavoriteCategoryOptions = useMemo(() => {
+    const configuredCategoryIds = new Set(favoriteBlockCategories.map((category) => category.storeCategoryId));
+    return storeCategories.filter((category) => !configuredCategoryIds.has(category.id));
+  }, [favoriteBlockCategories, storeCategories]);
+
+  const selectedFavoriteCategory = useMemo(() => {
+    return favoriteBlockCategories.find((category) => category.id === selectedFavoriteCategoryId) || null;
+  }, [favoriteBlockCategories, selectedFavoriteCategoryId]);
+
+  const filteredFavoriteProducts = useMemo(() => {
+    const term = favoriteProductsSearch.trim().toLowerCase();
+
+    return favoriteCategoryProducts.filter((item) => {
+      if (!term) return true;
+
+      return (
+        item.alias?.toLowerCase().includes(term) ||
+        item.product?.name?.toLowerCase().includes(term) ||
+        item.product?.code?.toLowerCase().includes(term)
+      );
+    });
+  }, [favoriteCategoryProducts, favoriteProductsSearch]);
 
   const isItemUncategorized = useCallback((item) => {
     return !Array.isArray(item?.categories) || item.categories.length === 0;
@@ -427,7 +529,10 @@ const Store = () => {
 
       setCategoryDraft('');
       setEditingCategoryId(null);
-      await loadStoreCategories();
+      await Promise.all([
+        loadStoreCategories(),
+        loadFavoriteBlockCategories(selectedFavoriteCategoryId),
+      ]);
     } catch (error) {
       console.error('Error saving store category:', error);
       const message = error?.response?.data?.message || 'No se pudo guardar la categoria';
@@ -454,7 +559,11 @@ const Store = () => {
     try {
       await httpService.deleteData('/store-items/categories', category.id);
       successAlert('Categoria eliminada', 'La categoria fue eliminada correctamente');
-      await Promise.all([loadStoreCategories(), loadStoreItems()]);
+      await Promise.all([
+        loadStoreCategories(),
+        loadStoreItems(),
+        loadFavoriteBlockCategories(selectedFavoriteCategoryId),
+      ]);
     } catch (error) {
       console.error('Error deleting store category:', error);
       const message = error?.response?.data?.message || 'No se pudo eliminar la categoria';
@@ -465,6 +574,100 @@ const Store = () => {
   const resetCategoryForm = () => {
     setEditingCategoryId(null);
     setCategoryDraft('');
+  };
+
+  const handleAddFavoriteCategory = async () => {
+    const storeCategoryId = Number(favoriteCategoryDraftId);
+
+    if (!Number.isInteger(storeCategoryId) || storeCategoryId <= 0) {
+      errorAlert('Dato requerido', 'Debes seleccionar una categoria de tienda para favoritos');
+      return;
+    }
+
+    try {
+      setSavingFavoriteCategory(true);
+      const response = await httpService.postData('/store-items/favorites/categories', {
+        storeCategoryId,
+      });
+
+      if (response.status === 201 || response.status === 200) {
+        const createdFavoriteCategoryId = response.data?.favoriteCategory?.id || null;
+        successAlert('Categoria agregada', 'La categoria se agrego al bloque favoritos');
+        setFavoriteCategoryDraftId('');
+        await loadFavoriteBlockCategories(createdFavoriteCategoryId);
+      } else {
+        errorAlert('Error', 'No se pudo agregar la categoria a favoritos');
+      }
+    } catch (error) {
+      console.error('Error creating favorite block category:', error);
+      const message = error?.response?.data?.message || 'No se pudo agregar la categoria a favoritos';
+      errorAlert('Error', message);
+    } finally {
+      setSavingFavoriteCategory(false);
+    }
+  };
+
+  const handleDeleteFavoriteCategory = async (favoriteCategory) => {
+    const confirm = await confirmAlert(
+      'Quitar categoria de favoritos',
+      `Se quitara ${favoriteCategory?.category?.name || 'la categoria seleccionada'} del bloque favoritos. Deseas continuar?`,
+      'warning'
+    );
+
+    if (!confirm) return;
+
+    try {
+      await httpService.deleteData('/store-items/favorites/categories', favoriteCategory.id);
+      successAlert('Categoria eliminada', 'La categoria se elimino del bloque favoritos');
+      await loadFavoriteBlockCategories();
+    } catch (error) {
+      console.error('Error deleting favorite block category:', error);
+      const message = error?.response?.data?.message || 'No se pudo eliminar la categoria de favoritos';
+      errorAlert('Error', message);
+    }
+  };
+
+  const handleToggleFavoriteProduct = (storeItemId) => {
+    setSelectedFavoriteProductIds((previousIds) => {
+      if (previousIds.includes(storeItemId)) {
+        return previousIds.filter((id) => id !== storeItemId);
+      }
+
+      return [...previousIds, storeItemId];
+    });
+  };
+
+  const handleSaveFavoriteProducts = async () => {
+    if (!selectedFavoriteCategoryId) {
+      errorAlert('Dato requerido', 'Debes seleccionar una categoria del bloque favoritos');
+      return;
+    }
+
+    try {
+      setSavingFavoriteProducts(true);
+
+      const response = await httpService.patchData(
+        `/store-items/favorites/categories/${selectedFavoriteCategoryId}/products`,
+        { storeItemIds: selectedFavoriteProductIds }
+      );
+
+      if (response.status === 200) {
+        successAlert('Favoritos actualizados', 'La seleccion de productos favoritos se guardo correctamente');
+
+        await Promise.all([
+          loadFavoriteBlockCategories(selectedFavoriteCategoryId),
+          loadFavoriteCategoryProducts(selectedFavoriteCategoryId),
+        ]);
+      } else {
+        errorAlert('Error', 'No se pudo guardar la seleccion de favoritos');
+      }
+    } catch (error) {
+      console.error('Error updating favorite block products:', error);
+      const message = error?.response?.data?.message || 'No se pudo guardar la seleccion de favoritos';
+      errorAlert('Error', message);
+    } finally {
+      setSavingFavoriteProducts(false);
+    }
   };
 
   const getStoreItemPrimaryImage = (item) => {
@@ -555,6 +758,18 @@ const Store = () => {
             }}
           >
             <span>🏷</span> Categorias de Tienda
+          </a>
+        </li>
+        <li className="nav-item">
+          <a
+            className={`nav-link ${activeTab === 'favorites' ? 'active' : ''}`}
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              setActiveTab('favorites');
+            }}
+          >
+            <span>⭐</span> Bloque Favoritos
           </a>
         </li>
         <li className="nav-item">
@@ -731,6 +946,167 @@ const Store = () => {
                   </div>
                 ))}
               </div>
+            </section>
+          </div>
+        )}
+
+        {activeTab === 'favorites' && (
+          <div className="store_favorites_grid">
+            <section className="store_card">
+              <h3>Configurar bloque favoritos</h3>
+              <small className="store_hint_text">
+                Selecciona las categorias que apareceran como filtros en el bloque &quot;Favoritos de nuestros clientes&quot;.
+              </small>
+
+              <div className="favorite_category_editor mt-2">
+                <select
+                  className="form-select"
+                  value={favoriteCategoryDraftId}
+                  onChange={(e) => setFavoriteCategoryDraftId(e.target.value)}
+                >
+                  <option value="">Selecciona una categoria de tienda</option>
+                  {availableFavoriteCategoryOptions.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handleAddFavoriteCategory}
+                  disabled={savingFavoriteCategory || availableFavoriteCategoryOptions.length === 0}
+                >
+                  {savingFavoriteCategory ? 'Agregando...' : 'Agregar'}
+                </button>
+              </div>
+
+              {loadingFavoriteCategories ? (
+                <div className="centered_spinner">
+                  <Spinner color="#6564d8" />
+                </div>
+              ) : (
+                <div className="store_list mt-3">
+                  {favoriteBlockCategories.length === 0 ? (
+                    <p className="store_gallery_empty">No has configurado categorias para el bloque favoritos.</p>
+                  ) : (
+                    favoriteBlockCategories.map((favoriteCategory) => {
+                      const isSelected = selectedFavoriteCategoryId === favoriteCategory.id;
+
+                      return (
+                        <div key={favoriteCategory.id} className={`store_list_item no-pointer ${isSelected ? 'is-selected-favorite' : ''}`}>
+                          <div>
+                            <p className="store_list_title">{favoriteCategory.category?.name}</p>
+                            <p className="store_list_subtitle">
+                              /{favoriteCategory.category?.slug} | {favoriteCategory.selectedItemsCount} productos seleccionados
+                            </p>
+                          </div>
+
+                          <div className="row_actions">
+                            <button
+                              type="button"
+                              className={`btn btn-sm ${isSelected ? 'btn-primary' : 'btn-outline-primary'}`}
+                              onClick={() => setSelectedFavoriteCategoryId(favoriteCategory.id)}
+                            >
+                              {isSelected ? 'Activa' : 'Seleccionar'}
+                            </button>
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-outline-danger"
+                              onClick={() => handleDeleteFavoriteCategory(favoriteCategory)}
+                            >
+                              Quitar
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+              )}
+            </section>
+
+            <section className="store_card">
+              <h3>Seleccionar productos favoritos</h3>
+
+              {!selectedFavoriteCategory ? (
+                <p className="text-muted">Selecciona primero una categoria del bloque favoritos para listar sus productos.</p>
+              ) : (
+                <>
+                  <div className="store_favorites_header">
+                    <div>
+                      <p className="store_list_title mb-0">Categoria activa: {selectedFavoriteCategory.category?.name}</p>
+                      <p className="store_list_subtitle mb-0">
+                        Solo se muestran items publicados que pertenecen a esta categoria.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      onClick={handleSaveFavoriteProducts}
+                      disabled={savingFavoriteProducts || loadingFavoriteProducts}
+                    >
+                      {savingFavoriteProducts ? 'Guardando...' : 'Guardar seleccion'}
+                    </button>
+                  </div>
+
+                  <input
+                    type="text"
+                    className="form-control my-3"
+                    placeholder="Buscar producto por alias, nombre o codigo"
+                    value={favoriteProductsSearch}
+                    onChange={(e) => setFavoriteProductsSearch(e.target.value)}
+                  />
+
+                  {loadingFavoriteProducts ? (
+                    <div className="centered_spinner">
+                      <Spinner color="#6564d8" />
+                    </div>
+                  ) : (
+                    <div className="store_list">
+                      {filteredFavoriteProducts.length === 0 ? (
+                        <p className="store_gallery_empty">
+                          No hay items publicados para esta categoria o no coinciden con la busqueda.
+                        </p>
+                      ) : (
+                        filteredFavoriteProducts.map((item) => {
+                          const checked = selectedFavoriteProductIds.includes(item.id);
+
+                          return (
+                            <label key={item.id} className="store_list_item">
+                              <div className="store_source_main">
+                                <div className="store_source_left">
+                                  <input
+                                    type="checkbox"
+                                    checked={checked}
+                                    onChange={() => handleToggleFavoriteProduct(item.id)}
+                                  />
+                                  <ZoomableImage
+                                    src={getMediaSrc(getStoreItemPrimaryImage(item))}
+                                    alt={item.alias || item.product?.name || 'Item favorito'}
+                                    thumbnailWidth={48}
+                                    thumbnailHeight={48}
+                                  />
+                                </div>
+
+                                <div className="store_source_meta">
+                                  <p className="store_list_title">{item.alias}</p>
+                                  <p className="store_list_subtitle">
+                                    {item.product?.name} | {item.product?.code}
+                                  </p>
+                                  <p className="store_source_prices">
+                                    ${item.webPrice} | {item.categories?.map((category) => category.name).join(', ')}
+                                  </p>
+                                </div>
+                              </div>
+                            </label>
+                          );
+                        })
+                      )}
+                    </div>
+                  )}
+                </>
+              )}
             </section>
           </div>
         )}

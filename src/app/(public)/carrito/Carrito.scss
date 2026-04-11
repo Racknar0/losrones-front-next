@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 $dark-plum: #3B001B;
 $soft-pink: #EF98C1;
 $warm-yellow: #FFBA30;
@@ -314,7 +316,7 @@ $deep-accent: #5C1A3A;
     font-family: inherit;
 
     &:hover {
-      background: darken(#25D366, 6%);
+      background: color.adjust(#25D366, $lightness: -6%);
       transform: translateY(-2px);
       box-shadow: 0 4px 20px rgba(#25D366, 0.35);
     }

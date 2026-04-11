@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 $dark-plum: #3B001B;
 $soft-pink: #EF98C1;
 $warm-yellow: #FFBA30;
@@ -243,7 +245,7 @@ $deep-accent: #5C1A3A;
     transition: all 0.3s ease;
 
     &:hover {
-      background: darken($warm-yellow, 4%);
+      background: color.adjust($warm-yellow, $lightness: -4%);
       transform: translateY(-1px);
     }
   }
