@@ -37,7 +37,6 @@ const NEWS_EDITOR_FORMATS = [
   'italic',
   'underline',
   'list',
-  'bullet',
   'link',
   'blockquote',
 ];
@@ -1692,11 +1691,11 @@ const Store = () => {
                           )}
                           <div>
                             <p className="store_list_title">{item.title}</p>
-                            {item.tag && <span className="badge bg-info text-dark mb-1">#{item.tag}</span>}
+                            {item.tag && <span className="badge bg-info text-dark store_news_tag_chip">#{item.tag}</span>}
                             <p className="store_list_subtitle">{item.excerpt || 'Sin descripcion'}</p>
                           </div>
                         </div>
-                        <span className={`badge ${item.isActive ? 'bg-success' : 'bg-secondary'}`}>
+                        <span className={`badge store_news_status_chip ${item.isActive ? 'bg-success' : 'bg-secondary'}`}>
                           {item.isActive ? 'Activa' : 'Inactiva'}
                         </span>
                       </div>

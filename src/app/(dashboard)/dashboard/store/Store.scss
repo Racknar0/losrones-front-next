@@ -411,6 +411,20 @@
   background-color: #f4f1ff;
 }
 
+.store_news_tag_chip,
+.store_news_status_chip {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.22rem 0.46rem;
+  line-height: 1.05;
+  border-radius: 999px;
+}
+
+.store_news_tag_chip {
+  display: inline-flex;
+  margin-bottom: 0.3rem;
+}
+
 .store_price_grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
