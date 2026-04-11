@@ -149,12 +149,12 @@ $deep-accent: #5C1A3A;
     &::before {
       content: '';
       position: absolute;
-      width: 100%; /* Qué tan pequeño quieres el cuadro respecto a la imagen (ajustable) */
-      height: 100%;
+      width: 90%; /* Qué tan pequeño quieres el cuadro respecto a la imagen (ajustable) */
+      height: 90%;
       background: linear-gradient(135deg, $soft-pink 0%, $warm-yellow 100%);
       border-radius: 24px; /* Esquinas redondeadas como en tu imagen de referencia */
       z-index: 0; /* Lo enviamos al fondo */
-      bottom: -35px;
+      bottom: -10px;
 
       @media (max-width: 1024px) {
          bottom: -26px;

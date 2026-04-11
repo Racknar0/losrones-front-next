@@ -22,6 +22,9 @@ export default function PublicLayout({ children }) {
       <main className="public-main">
         {children}
       </main>
+      <div className="site-construction-banner" role="status" aria-live="polite">
+        Este sitio esta en construccion
+      </div>
     </>
   );
 }
