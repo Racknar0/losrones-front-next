@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import dynamic from 'next/dynamic';
 import HttpService from '@services/HttpService';
 import useChunkedVirtualizedList from '@helpers/useChunkedVirtualizedList';
 import productDefaultImg from '@assets/product_default.png';
@@ -12,10 +13,34 @@ import {
   successAlert,
 } from '@helpers/alerts';
 import Spinner from '@admin-shared/spinner/Spinner';
+import 'react-quill-new/dist/quill.snow.css';
 import './Store.scss';
+
+const RichTextEditor = dynamic(() => import('react-quill-new'), { ssr: false });
 
 const MIN_NEAR_SQUARE_RATIO = 0.5;
 const MAX_NEAR_SQUARE_RATIO = 1.5;
+
+const NEWS_EDITOR_MODULES = {
+  toolbar: [
+    [{ header: [2, 3, false] }],
+    ['bold', 'italic', 'underline'],
+    [{ list: 'ordered' }, { list: 'bullet' }],
+    ['link', 'blockquote'],
+    ['clean'],
+  ],
+};
+
+const NEWS_EDITOR_FORMATS = [
+  'header',
+  'bold',
+  'italic',
+  'underline',
+  'list',
+  'bullet',
+  'link',
+  'blockquote',
+];
 
 const Store = () => {
   const httpService = new HttpService();
@@ -49,6 +74,33 @@ const Store = () => {
   const [loadingFavoriteProducts, setLoadingFavoriteProducts] = useState(false);
   const [savingFavoriteCategory, setSavingFavoriteCategory] = useState(false);
   const [savingFavoriteProducts, setSavingFavoriteProducts] = useState(false);
+
+  const [highlightForm, setHighlightForm] = useState({
+    title: '',
+    description: '',
+    discountLabel: '',
+    isActive: true,
+    existingImage: null,
+    newImage: null,
+  });
+  const [loadingHighlightBlock, setLoadingHighlightBlock] = useState(false);
+  const [savingHighlightBlock, setSavingHighlightBlock] = useState(false);
+
+  const [newsItems, setNewsItems] = useState([]);
+  const [newsSearch, setNewsSearch] = useState('');
+  const [selectedNewsId, setSelectedNewsId] = useState(null);
+  const [loadingNews, setLoadingNews] = useState(false);
+  const [savingNews, setSavingNews] = useState(false);
+  const [deletingNews, setDeletingNews] = useState(false);
+  const [newsForm, setNewsForm] = useState({
+    id: null,
+    title: '',
+    tag: '',
+    descriptionHtml: '',
+    isActive: true,
+    existingImage: null,
+    newImage: null,
+  });
 
   const [categoryDraft, setCategoryDraft] = useState('');
   const [editingCategoryId, setEditingCategoryId] = useState(null);
@@ -159,6 +211,75 @@ const Store = () => {
     }
   };
 
+  const loadHighlightBlock = async () => {
+    try {
+      setLoadingHighlightBlock(true);
+      const response = await httpService.getData('/store-items/highlight-block');
+
+      if (response.status === 200) {
+        const block = response.data || {};
+        setHighlightForm((prev) => ({
+          ...prev,
+          title: block.title || '',
+          description: block.description || '',
+          discountLabel: block.discountLabel || '',
+          isActive: block.isActive !== undefined ? Boolean(block.isActive) : true,
+          existingImage: block.image || null,
+          newImage: null,
+        }));
+      }
+    } catch (error) {
+      console.error('Error loading highlight block:', error);
+      errorAlert('Error', 'No se pudo cargar la configuracion del bloque destacado');
+    } finally {
+      setLoadingHighlightBlock(false);
+    }
+  };
+
+  const loadStoreNews = async (preferredNewsId = null) => {
+    try {
+      setLoadingNews(true);
+      const response = await httpService.getData('/store-items/news');
+
+      if (response.status === 200) {
+        const items = response.data || [];
+        setNewsItems(items);
+
+        const resolvedSelectedId = preferredNewsId ?? selectedNewsId;
+        const selectedItem = items.find((item) => item.id === resolvedSelectedId) || items[0] || null;
+
+        if (selectedItem) {
+          setSelectedNewsId(selectedItem.id);
+          setNewsForm({
+            id: selectedItem.id,
+            title: selectedItem.title || '',
+            tag: selectedItem.tag || '',
+            descriptionHtml: selectedItem.descriptionHtml || '',
+            isActive: Boolean(selectedItem.isActive),
+            existingImage: selectedItem.image || null,
+            newImage: null,
+          });
+        } else {
+          setSelectedNewsId(null);
+          setNewsForm({
+            id: null,
+            title: '',
+            tag: '',
+            descriptionHtml: '',
+            isActive: true,
+            existingImage: null,
+            newImage: null,
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error loading store news:', error);
+      errorAlert('Error', 'No se pudieron cargar las noticias');
+    } finally {
+      setLoadingNews(false);
+    }
+  };
+
   const loadAll = async () => {
     await Promise.all([
       loadSourceProducts(),
@@ -181,6 +302,18 @@ const Store = () => {
   useEffect(() => {
     if (activeTab !== 'favorites') return;
     loadFavoriteBlockCategories(selectedFavoriteCategoryId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab]);
+
+  useEffect(() => {
+    if (activeTab !== 'highlight') return;
+    loadHighlightBlock();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab]);
+
+  useEffect(() => {
+    if (activeTab !== 'news') return;
+    loadStoreNews();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
 
@@ -235,6 +368,20 @@ const Store = () => {
     });
   }, [favoriteCategoryProducts, favoriteProductsSearch]);
 
+  const filteredNewsItems = useMemo(() => {
+    const term = newsSearch.trim().toLowerCase();
+
+    return newsItems.filter((item) => {
+      if (!term) return true;
+
+      return (
+        item.title?.toLowerCase().includes(term) ||
+        item.excerpt?.toLowerCase().includes(term) ||
+        item.tag?.toLowerCase().includes(term)
+      );
+    });
+  }, [newsItems, newsSearch]);
+
   const isItemUncategorized = useCallback((item) => {
     return !Array.isArray(item?.categories) || item.categories.length === 0;
   }, []);
@@ -270,11 +417,37 @@ const Store = () => {
     }));
   }, [form.newImages]);
 
+  const highlightImagePreview = useMemo(() => {
+    if (!highlightForm.newImage) return null;
+    return URL.createObjectURL(highlightForm.newImage);
+  }, [highlightForm.newImage]);
+
+  const newsImagePreview = useMemo(() => {
+    if (!newsForm.newImage) return null;
+    return URL.createObjectURL(newsForm.newImage);
+  }, [newsForm.newImage]);
+
   useEffect(() => {
     return () => {
       newImagePreviews.forEach((preview) => URL.revokeObjectURL(preview.previewUrl));
     };
   }, [newImagePreviews]);
+
+  useEffect(() => {
+    return () => {
+      if (highlightImagePreview) {
+        URL.revokeObjectURL(highlightImagePreview);
+      }
+    };
+  }, [highlightImagePreview]);
+
+  useEffect(() => {
+    return () => {
+      if (newsImagePreview) {
+        URL.revokeObjectURL(newsImagePreview);
+      }
+    };
+  }, [newsImagePreview]);
 
   const {
     visibleItems: visibleSourceProducts,
@@ -670,6 +843,231 @@ const Store = () => {
     }
   };
 
+  const handleHighlightImageChange = (file) => {
+    if (!file) return;
+
+    if (!file.type?.startsWith('image/')) {
+      errorAlert('Formato no permitido', 'Debes seleccionar una imagen valida para el bloque destacado');
+      return;
+    }
+
+    setHighlightForm((prev) => ({
+      ...prev,
+      newImage: file,
+    }));
+  };
+
+  const handleRemoveHighlightImage = () => {
+    setHighlightForm((prev) => ({
+      ...prev,
+      existingImage: null,
+      newImage: null,
+    }));
+  };
+
+  const handleSaveHighlightBlock = async (e) => {
+    e.preventDefault();
+
+    const title = highlightForm.title.trim();
+    const description = highlightForm.description.trim();
+    const discountLabel = highlightForm.discountLabel.trim();
+    const hasImage = Boolean(highlightForm.newImage || highlightForm.existingImage);
+
+    if (!title) {
+      errorAlert('Dato requerido', 'El titulo del bloque destacado es obligatorio');
+      return;
+    }
+
+    if (!description) {
+      errorAlert('Dato requerido', 'La descripcion del bloque destacado es obligatoria');
+      return;
+    }
+
+    if (!hasImage) {
+      errorAlert('Dato requerido', 'Debes anexar una imagen para el bloque destacado');
+      return;
+    }
+
+    const payload = new FormData();
+    payload.append('title', title);
+    payload.append('description', description);
+    payload.append('discountLabel', discountLabel);
+    payload.append('isActive', String(highlightForm.isActive));
+    payload.append('keepCurrentImage', String(Boolean(highlightForm.existingImage && !highlightForm.newImage)));
+
+    if (highlightForm.newImage) {
+      payload.append('highlightImage', highlightForm.newImage);
+    }
+
+    try {
+      setSavingHighlightBlock(true);
+      const response = await httpService.patchData('/store-items/highlight-block', payload);
+
+      if (response.status === 200) {
+        const savedBlock = response.data?.highlightBlock || {};
+        successAlert('Bloque actualizado', 'El bloque destacado se actualizo correctamente');
+
+        setHighlightForm((prev) => ({
+          ...prev,
+          title: savedBlock.title || title,
+          description: savedBlock.description || description,
+          discountLabel: savedBlock.discountLabel || '',
+          isActive: savedBlock.isActive !== undefined ? Boolean(savedBlock.isActive) : prev.isActive,
+          existingImage: savedBlock.image || null,
+          newImage: null,
+        }));
+      } else {
+        errorAlert('Error', 'No se pudo guardar el bloque destacado');
+      }
+    } catch (error) {
+      console.error('Error updating highlight block:', error);
+      const message = error?.response?.data?.message || 'No se pudo guardar el bloque destacado';
+      errorAlert('Error', message);
+    } finally {
+      setSavingHighlightBlock(false);
+    }
+  };
+
+  const handleCreateNewsDraft = () => {
+    setSelectedNewsId(null);
+    setNewsForm({
+      id: null,
+      title: '',
+      tag: '',
+      descriptionHtml: '',
+      isActive: true,
+      existingImage: null,
+      newImage: null,
+    });
+  };
+
+  const handleSelectNews = (item) => {
+    setSelectedNewsId(item.id);
+    setNewsForm({
+      id: item.id,
+      title: item.title || '',
+      tag: item.tag || '',
+      descriptionHtml: item.descriptionHtml || '',
+      isActive: Boolean(item.isActive),
+      existingImage: item.image || null,
+      newImage: null,
+    });
+  };
+
+  const handleNewsImageChange = (file) => {
+    if (!file) return;
+
+    if (!file.type?.startsWith('image/')) {
+      errorAlert('Formato no permitido', 'Debes seleccionar una imagen valida para la noticia');
+      return;
+    }
+
+    setNewsForm((prev) => ({
+      ...prev,
+      newImage: file,
+    }));
+  };
+
+  const handleRemoveNewsImage = () => {
+    setNewsForm((prev) => ({
+      ...prev,
+      existingImage: null,
+      newImage: null,
+    }));
+  };
+
+  const handleSaveNews = async (e) => {
+    e.preventDefault();
+
+    const title = newsForm.title.trim();
+    const tag = newsForm.tag.trim();
+    const descriptionHtml = newsForm.descriptionHtml || '';
+    const descriptionText = descriptionHtml
+      .replace(/<[^>]*>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+    const hasImage = Boolean(newsForm.newImage || newsForm.existingImage);
+
+    if (!title) {
+      errorAlert('Dato requerido', 'El titulo de la noticia es obligatorio');
+      return;
+    }
+
+    if (!descriptionText) {
+      errorAlert('Dato requerido', 'La descripcion de la noticia es obligatoria');
+      return;
+    }
+
+    if (!hasImage) {
+      errorAlert('Dato requerido', 'Debes anexar una imagen para la noticia');
+      return;
+    }
+
+    const payload = new FormData();
+    payload.append('title', title);
+    payload.append('tag', tag);
+    payload.append('descriptionHtml', descriptionHtml);
+    payload.append('isActive', String(newsForm.isActive));
+    payload.append('keepCurrentImage', String(Boolean(newsForm.existingImage && !newsForm.newImage)));
+
+    if (newsForm.newImage) {
+      payload.append('newsImage', newsForm.newImage);
+    }
+
+    try {
+      setSavingNews(true);
+
+      let response;
+      if (newsForm.id) {
+        response = await httpService.putFormData('/store-items/news', newsForm.id, payload);
+      } else {
+        response = await httpService.postFormData('/store-items/news', payload);
+      }
+
+      if (response.status === 200 || response.status === 201) {
+        const savedId = response.data?.news?.id || null;
+        successAlert('Noticia guardada', 'La noticia se guardo correctamente');
+        await loadStoreNews(savedId);
+      } else {
+        errorAlert('Error', 'No se pudo guardar la noticia');
+      }
+    } catch (error) {
+      console.error('Error saving news:', error);
+      const message = error?.response?.data?.message || 'No se pudo guardar la noticia';
+      errorAlert('Error', message);
+    } finally {
+      setSavingNews(false);
+    }
+  };
+
+  const handleDeleteSelectedNews = async () => {
+    if (!newsForm.id) {
+      errorAlert('Seleccion requerida', 'Debes seleccionar una noticia para eliminar');
+      return;
+    }
+
+    const confirm = await confirmAlert(
+      'Eliminar noticia',
+      'La noticia seleccionada se eliminara. Deseas continuar?',
+      'warning'
+    );
+
+    if (!confirm) return;
+
+    try {
+      setDeletingNews(true);
+      await httpService.deleteData('/store-items/news', newsForm.id);
+      successAlert('Noticia eliminada', 'La noticia fue eliminada correctamente');
+      await loadStoreNews();
+    } catch (error) {
+      console.error('Error deleting news:', error);
+      const message = error?.response?.data?.message || 'No se pudo eliminar la noticia';
+      errorAlert('Error', message);
+    } finally {
+      setDeletingNews(false);
+    }
+  };
+
   const getStoreItemPrimaryImage = (item) => {
     if (item?.image) return item.image;
     if (Array.isArray(item?.gallery) && item.gallery.length > 0) return item.gallery[0];
@@ -770,6 +1168,30 @@ const Store = () => {
             }}
           >
             <span>⭐</span> Bloque Favoritos
+          </a>
+        </li>
+        <li className="nav-item">
+          <a
+            className={`nav-link ${activeTab === 'highlight' ? 'active' : ''}`}
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              setActiveTab('highlight');
+            }}
+          >
+            <span>🔥</span> Bloque Destacado
+          </a>
+        </li>
+        <li className="nav-item">
+          <a
+            className={`nav-link ${activeTab === 'news' ? 'active' : ''}`}
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              setActiveTab('news');
+            }}
+          >
+            <span>📰</span> Noticias
           </a>
         </li>
         <li className="nav-item">
@@ -1107,6 +1529,266 @@ const Store = () => {
                   )}
                 </>
               )}
+            </section>
+          </div>
+        )}
+
+        {activeTab === 'highlight' && (
+          <div className="store_highlight_grid">
+            <section className="store_card store_editor_card">
+              <h3>Configurar bloque destacado</h3>
+              <small className="store_hint_text">
+                Este bloque se usara despues en Home para destacar una promocion o producto clave.
+              </small>
+
+              {loadingHighlightBlock ? (
+                <div className="centered_spinner">
+                  <Spinner color="#6564d8" />
+                </div>
+              ) : (
+                <form onSubmit={handleSaveHighlightBlock} className="mt-3">
+                  <div className="mb-2 form-check d-flex align-items-center gap-2">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      checked={highlightForm.isActive}
+                      onChange={(e) => setHighlightForm((prev) => ({ ...prev, isActive: e.target.checked }))}
+                    />
+                    <label className="form-check-label">Bloque activo</label>
+                  </div>
+
+                  <div className="mb-2">
+                    <label className="form-label">Descuento</label>
+                    <input
+                      className="form-control"
+                      placeholder="Ej: -30% OFF"
+                      value={highlightForm.discountLabel}
+                      onChange={(e) => setHighlightForm((prev) => ({ ...prev, discountLabel: e.target.value }))}
+                    />
+                  </div>
+
+                  <div className="mb-2">
+                    <label className="form-label">Titulo</label>
+                    <input
+                      className="form-control"
+                      placeholder="Titulo principal del bloque"
+                      value={highlightForm.title}
+                      onChange={(e) => setHighlightForm((prev) => ({ ...prev, title: e.target.value }))}
+                      required
+                    />
+                  </div>
+
+                  <div className="mb-2">
+                    <label className="form-label">Descripcion</label>
+                    <textarea
+                      rows={4}
+                      className="form-control"
+                      placeholder="Describe lo que se destacara en el Home"
+                      value={highlightForm.description}
+                      onChange={(e) => setHighlightForm((prev) => ({ ...prev, description: e.target.value }))}
+                      required
+                    />
+                  </div>
+
+                  <div className="mb-2">
+                    <label className="form-label">Imagen destacada</label>
+                    <input
+                      type="file"
+                      className="form-control"
+                      accept="image/*"
+                      onChange={(e) => {
+                        handleHighlightImageChange(e.target.files?.[0]);
+                        e.target.value = '';
+                      }}
+                    />
+                  </div>
+
+                  {(highlightImagePreview || highlightForm.existingImage) && (
+                    <div className="store_highlight_preview mt-2">
+                      <ZoomableImage
+                        src={highlightImagePreview || getMediaSrc(highlightForm.existingImage)}
+                        alt="Imagen bloque destacado"
+                        thumbnailWidth={140}
+                        thumbnailHeight={140}
+                      />
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-outline-danger"
+                        onClick={handleRemoveHighlightImage}
+                      >
+                        Quitar imagen
+                      </button>
+                    </div>
+                  )}
+
+                  <button type="submit" className="btn btn-primary mt-3" disabled={savingHighlightBlock}>
+                    {savingHighlightBlock ? 'Guardando...' : 'Guardar bloque destacado'}
+                  </button>
+                </form>
+              )}
+            </section>
+          </div>
+        )}
+
+        {activeTab === 'news' && (
+          <div className="store_news_grid">
+            <section className="store_card">
+              <h3>Listado de noticias</h3>
+
+              <div className="store_news_actions mb-2">
+                <button type="button" className="btn btn-primary btn-sm" onClick={handleCreateNewsDraft}>
+                  + Nueva noticia
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-outline-danger btn-sm"
+                  onClick={handleDeleteSelectedNews}
+                  disabled={!newsForm.id || deletingNews}
+                >
+                  {deletingNews ? 'Eliminando...' : 'Eliminar seleccionada'}
+                </button>
+              </div>
+
+              <input
+                type="text"
+                className="form-control mb-3"
+                placeholder="Buscar noticia por titulo"
+                value={newsSearch}
+                onChange={(e) => setNewsSearch(e.target.value)}
+              />
+
+              {loadingNews ? (
+                <div className="centered_spinner">
+                  <Spinner color="#6564d8" />
+                </div>
+              ) : (
+                <div className="store_list">
+                  {filteredNewsItems.length === 0 ? (
+                    <p className="store_gallery_empty">No hay noticias registradas.</p>
+                  ) : (
+                    filteredNewsItems.map((item) => (
+                      <div
+                        key={item.id}
+                        role="button"
+                        tabIndex={0}
+                        aria-pressed={selectedNewsId === item.id}
+                        className={`store_list_item btn_like ${selectedNewsId === item.id ? 'is-selected-news' : ''}`}
+                        onClick={() => handleSelectNews(item)}
+                        onKeyDown={(event) => {
+                          if (event.key === 'Enter' || event.key === ' ') {
+                            event.preventDefault();
+                            handleSelectNews(item);
+                          }
+                        }}
+                      >
+                        <div className="store_item_main">
+                          {item.image && (
+                            <ZoomableImage
+                              src={getMediaSrc(item.image)}
+                              alt={item.title || 'Noticia'}
+                              thumbnailWidth={44}
+                              thumbnailHeight={44}
+                            />
+                          )}
+                          <div>
+                            <p className="store_list_title">{item.title}</p>
+                            {item.tag && <span className="badge bg-info text-dark mb-1">#{item.tag}</span>}
+                            <p className="store_list_subtitle">{item.excerpt || 'Sin descripcion'}</p>
+                          </div>
+                        </div>
+                        <span className={`badge ${item.isActive ? 'bg-success' : 'bg-secondary'}`}>
+                          {item.isActive ? 'Activa' : 'Inactiva'}
+                        </span>
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
+            </section>
+
+            <section className="store_card store_editor_card">
+              <h3>{newsForm.id ? 'Editar noticia' : 'Crear noticia'}</h3>
+
+              <form onSubmit={handleSaveNews}>
+                <div className="mb-2 form-check d-flex align-items-center gap-2">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    checked={newsForm.isActive}
+                    onChange={(e) => setNewsForm((prev) => ({ ...prev, isActive: e.target.checked }))}
+                  />
+                  <label className="form-check-label">Noticia activa</label>
+                </div>
+
+                <div className="mb-2">
+                  <label className="form-label">Titulo</label>
+                  <input
+                    className="form-control"
+                    placeholder="Titulo de la noticia"
+                    value={newsForm.title}
+                    onChange={(e) => setNewsForm((prev) => ({ ...prev, title: e.target.value }))}
+                    required
+                  />
+                </div>
+
+                <div className="mb-2">
+                  <label className="form-label">Tag</label>
+                  <input
+                    className="form-control"
+                    placeholder="Ej: promociones, salud, eventos"
+                    value={newsForm.tag}
+                    onChange={(e) => setNewsForm((prev) => ({ ...prev, tag: e.target.value }))}
+                  />
+                </div>
+
+                <div className="mb-2">
+                  <label className="form-label">Descripcion (HTML con formato)</label>
+                  <div className="store_news_editor">
+                    <RichTextEditor
+                      theme="snow"
+                      value={newsForm.descriptionHtml}
+                      onChange={(value) => setNewsForm((prev) => ({ ...prev, descriptionHtml: value }))}
+                      modules={NEWS_EDITOR_MODULES}
+                      formats={NEWS_EDITOR_FORMATS}
+                    />
+                  </div>
+                </div>
+
+                <div className="mb-2">
+                  <label className="form-label">Imagen de noticia</label>
+                  <input
+                    type="file"
+                    className="form-control"
+                    accept="image/*"
+                    onChange={(e) => {
+                      handleNewsImageChange(e.target.files?.[0]);
+                      e.target.value = '';
+                    }}
+                  />
+                </div>
+
+                {(newsImagePreview || newsForm.existingImage) && (
+                  <div className="store_highlight_preview mt-2">
+                    <ZoomableImage
+                      src={newsImagePreview || getMediaSrc(newsForm.existingImage)}
+                      alt="Imagen noticia"
+                      thumbnailWidth={140}
+                      thumbnailHeight={140}
+                    />
+                    <button
+                      type="button"
+                      className="btn btn-sm btn-outline-danger"
+                      onClick={handleRemoveNewsImage}
+                    >
+                      Quitar imagen
+                    </button>
+                  </div>
+                )}
+
+                <button type="submit" className="btn btn-primary mt-3" disabled={savingNews}>
+                  {savingNews ? 'Guardando...' : newsForm.id ? 'Actualizar noticia' : 'Crear noticia'}
+                </button>
+              </form>
             </section>
           </div>
         )}

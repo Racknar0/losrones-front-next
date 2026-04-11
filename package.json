@@ -21,6 +21,7 @@
     "react-dom": "19.2.4",
     "react-medium-image-zoom": "^5.2.14",
     "react-pro-sidebar": "^1.1.0",
+    "react-quill-new": "^3.8.3",
     "sweetalert2": "^11.17.2",
     "tslib": "^2.8.1",
     "xlsx": "^0.18.5",
