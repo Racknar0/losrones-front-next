@@ -56,6 +56,11 @@ $cream: #FDF8F1;
     transition: all 0.25s ease;
     font-family: inherit;
 
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
     &:hover { border-color: $dark-plum; }
 
     &--active {
@@ -124,6 +129,16 @@ $cream: #FDF8F1;
     margin-top: 1.2rem;
   }
 
+  &__empty {
+    border: 1px dashed rgba($dark-plum, 0.2);
+    border-radius: 16px;
+    background: rgba(#fff, 0.5);
+    color: rgba($dark-plum, 0.8);
+    text-align: center;
+    font-weight: 600;
+    padding: 2rem 1rem;
+  }
+
   &__dot {
     width: 8px;
     height: 8px;
@@ -172,6 +187,33 @@ $cream: #FDF8F1;
     font-size: 0.75rem;
     color: #999;
     font-weight: 500;
+    overflow: hidden;
+    position: relative;
+  }
+
+  &__card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  &__card-placeholder {
+    font-size: 0.75rem;
+    color: #999;
+    font-weight: 500;
+  }
+
+  &__card-discount {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #ef4444;
+    color: #fff;
+    border-radius: 999px;
+    padding: 2px 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
   }
 
   &__card-rating {

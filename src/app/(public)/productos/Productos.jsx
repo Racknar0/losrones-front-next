@@ -27,13 +27,20 @@ const toNumber = (value, fallback = 0) => {
 };
 
 const normalizeProduct = (item) => {
-  const price = toNumber(item?.price, 0);
-  const originalPrice = toNumber(item?.originalPrice, price);
+  let price = toNumber(item?.price, 0);
+  let originalPrice = toNumber(item?.originalPrice, price);
   const rawGallery = Array.isArray(item?.gallery)
     ? item.gallery.map((entry) => String(entry)).filter(Boolean)
     : [];
   const image = item?.image || rawGallery[0] || null;
   const gallery = [...new Set([image, ...rawGallery].filter(Boolean))];
+
+  const hasValidDiscount = price > 0 && originalPrice > price;
+  if (!hasValidDiscount) {
+    const basePrice = originalPrice > 0 ? originalPrice : price;
+    price = basePrice;
+    originalPrice = basePrice;
+  }
 
   return {
     id: item?.id,
@@ -295,6 +302,7 @@ const Productos = () => {
       {/* ─── Product Modal ─── */}
       {selectedProduct && (
         <ProductModal
+          key={selectedProduct.id}
           product={selectedProduct}
           onClose={() => setSelectedProduct(null)}
         />

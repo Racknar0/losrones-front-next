@@ -3,11 +3,56 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import usePublicCart from '@store/usePublicCart';
-import { PRODUCTS as ALL_PRODUCTS } from '../../../productos/data/products';
+import HttpService from '@services/HttpService';
 import ProductModal from '../../../productos/components/ProductModal/ProductModal';
 import './ProductsSection.scss';
 
-const FEATURED_PRODUCT_IDS = [1, 2, 3, 8, 9, 10, 13, 14, 15];
+const ALL_FILTER_ID = 'all';
+const BACK_HOST = (process.env.NEXT_PUBLIC_BACK_HOST || '').replace(/\/+$/, '');
+const httpService = new HttpService();
+
+const getMediaSrc = (mediaPath) => {
+  if (!mediaPath) return '';
+  if (/^https?:\/\//i.test(mediaPath)) return mediaPath;
+
+  const normalizedPath = String(mediaPath).replace(/^\/+/, '');
+  if (!BACK_HOST) return `/${normalizedPath}`;
+  return `${BACK_HOST}/${normalizedPath}`;
+};
+
+const toNumber = (value, fallback = 0) => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+};
+
+const normalizeFavoriteProduct = (item) => {
+  let price = toNumber(item?.price, 0);
+  let originalPrice = toNumber(item?.originalPrice, price);
+
+  const gallery = Array.isArray(item?.gallery)
+    ? item.gallery.map((entry) => String(entry)).filter(Boolean)
+    : [];
+  const image = item?.image || gallery[0] || null;
+  const normalizedGallery = [...new Set([image, ...gallery].filter(Boolean))];
+
+  const hasValidDiscount = price > 0 && originalPrice > price;
+  if (!hasValidDiscount) {
+    const basePrice = originalPrice > 0 ? originalPrice : price;
+    price = basePrice;
+    originalPrice = basePrice;
+  }
+
+  return {
+    id: item?.id,
+    name: item?.name || 'Producto sin nombre',
+    description: item?.description || 'Sin descripcion disponible.',
+    price,
+    originalPrice,
+    rating: toNumber(item?.rating, 5),
+    image,
+    gallery: normalizedGallery,
+  };
+};
 
 const Stars = ({ count = 5, max = 5 }) => (
   <>
@@ -18,7 +63,12 @@ const Stars = ({ count = 5, max = 5 }) => (
 );
 
 const ProductsSection = () => {
-  const [activeFilter, setActiveFilter] = useState('all');
+  const [activeFilter, setActiveFilter] = useState(ALL_FILTER_ID);
+  const [favoriteCategories, setFavoriteCategories] = useState([]);
+  const [favoriteProducts, setFavoriteProducts] = useState([]);
+  const [loadingCategories, setLoadingCategories] = useState(true);
+  const [loadingProducts, setLoadingProducts] = useState(true);
+  const [fetchError, setFetchError] = useState('');
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);
@@ -31,16 +81,78 @@ const ProductsSection = () => {
   });
   const addItem = usePublicCart((state) => state.addItem);
 
-  const featuredProducts = useMemo(() => {
-    return FEATURED_PRODUCT_IDS
-      .map((productId) => ALL_PRODUCTS.find((product) => product.id === productId))
-      .filter(Boolean);
+  const filteredProducts = useMemo(() => favoriteProducts, [favoriteProducts]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadFavoriteCategories = async () => {
+      try {
+        setLoadingCategories(true);
+        const response = await httpService.getData('/store-items/public/favorites/categories');
+        const categories = Array.isArray(response?.data) ? response.data : [];
+
+        if (!isMounted) return;
+        setFavoriteCategories(categories);
+      } catch (error) {
+        console.error('Error loading public favorite categories:', error);
+        if (!isMounted) return;
+        setFavoriteCategories([]);
+      } finally {
+        if (isMounted) {
+          setLoadingCategories(false);
+        }
+      }
+    };
+
+    loadFavoriteCategories();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
-  const filteredProducts = useMemo(() => {
-    if (activeFilter === 'all') return featuredProducts;
-    return featuredProducts.filter((product) => product.category === activeFilter);
-  }, [activeFilter, featuredProducts]);
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadFavoriteProducts = async () => {
+      try {
+        setLoadingProducts(true);
+        setFetchError('');
+
+        const query = new URLSearchParams();
+        if (activeFilter !== ALL_FILTER_ID) {
+          query.set('favoriteCategoryId', activeFilter);
+        }
+
+        const endpoint = query.toString()
+          ? `/store-items/public/favorites/products?${query.toString()}`
+          : '/store-items/public/favorites/products';
+
+        const response = await httpService.getData(endpoint);
+        const items = Array.isArray(response?.data?.items) ? response.data.items : [];
+
+        if (!isMounted) return;
+        setFavoriteProducts(items.map(normalizeFavoriteProduct));
+      } catch (error) {
+        console.error('Error loading public favorite products:', error);
+
+        if (!isMounted) return;
+        setFavoriteProducts([]);
+        setFetchError('No se pudieron cargar los favoritos. Intenta nuevamente en un momento.');
+      } finally {
+        if (isMounted) {
+          setLoadingProducts(false);
+        }
+      }
+    };
+
+    loadFavoriteProducts();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [activeFilter]);
 
   const handleQuickAdd = (event, product) => {
     event.stopPropagation();
@@ -107,34 +219,32 @@ const ProductsSection = () => {
         <div className="products__filters">
           <button
             type="button"
-            className={`products__filter-btn ${activeFilter === 'all' ? 'products__filter-btn--active' : ''}`}
-            onClick={() => setActiveFilter('all')}
+            className={`products__filter-btn ${activeFilter === ALL_FILTER_ID ? 'products__filter-btn--active' : ''}`}
+            onClick={() => setActiveFilter(ALL_FILTER_ID)}
+            disabled={loadingCategories}
           >
             Todos
           </button>
-          <button
-            type="button"
-            className={`products__filter-btn ${activeFilter === 'alimento' ? 'products__filter-btn--active' : ''}`}
-            onClick={() => setActiveFilter('alimento')}
-          >
-            Alimento
-          </button>
-          <button
-            type="button"
-            className={`products__filter-btn ${activeFilter === 'juguetes' ? 'products__filter-btn--active' : ''}`}
-            onClick={() => setActiveFilter('juguetes')}
-          >
-            Juguetes
-          </button>
-          <button
-            type="button"
-            className={`products__filter-btn ${activeFilter === 'accesorios' ? 'products__filter-btn--active' : ''}`}
-            onClick={() => setActiveFilter('accesorios')}
-          >
-            Accesorios
-          </button>
+          {favoriteCategories.map((favoriteCategory) => (
+            <button
+              key={favoriteCategory.id}
+              type="button"
+              className={`products__filter-btn ${activeFilter === String(favoriteCategory.id) ? 'products__filter-btn--active' : ''}`}
+              onClick={() => setActiveFilter(String(favoriteCategory.id))}
+              disabled={loadingCategories}
+            >
+              {favoriteCategory.category?.name || 'Categoria'}
+            </button>
+          ))}
         </div>
 
+        {loadingProducts ? (
+          <div className="products__empty">Cargando favoritos...</div>
+        ) : fetchError ? (
+          <div className="products__empty">{fetchError}</div>
+        ) : filteredProducts.length === 0 ? (
+          <div className="products__empty">Aun no hay productos configurados en el bloque favoritos.</div>
+        ) : (
         <div className="products__slider-shell">
           <button
             type="button"
@@ -162,14 +272,27 @@ const ProductsSection = () => {
                       }
                     }}
                   >
-                    <div className="products__card-image">📷 Imagen producto</div>
+                    <div className="products__card-image">
+                      {product.image ? (
+                        <img className="products__card-img" src={getMediaSrc(product.image)} alt={product.name} loading="lazy" />
+                      ) : (
+                        <span className="products__card-placeholder">📷 Imagen producto</span>
+                      )}
+                      {product.originalPrice > product.price && (
+                        <span className="products__card-discount">
+                          -{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%
+                        </span>
+                      )}
+                    </div>
                     <div className="products__card-rating">
                       <Stars count={product.rating} />
                     </div>
                     <div className="products__card-name">{product.name}</div>
                     <div className="products__card-price">
-                      <span className="products__card-price-current">${product.price}</span>
-                      <span className="products__card-price-original">${product.originalPrice}</span>
+                      <span className="products__card-price-current">${product.price.toFixed(2)}</span>
+                      {product.originalPrice > product.price && (
+                        <span className="products__card-price-original">${product.originalPrice.toFixed(2)}</span>
+                      )}
                     </div>
                     <button
                       type="button"
@@ -194,8 +317,9 @@ const ProductsSection = () => {
             ›
           </button>
         </div>
+        )}
 
-        {snapPoints.length > 1 && (
+        {filteredProducts.length > 0 && snapPoints.length > 1 && (
           <div className="products__dots" aria-label="Paginación de productos destacados">
             {snapPoints.map((_, index) => (
               <button
@@ -213,6 +337,7 @@ const ProductsSection = () => {
 
       {selectedProduct && (
         <ProductModal
+          key={selectedProduct.id}
           product={selectedProduct}
           onClose={() => setSelectedProduct(null)}
         />

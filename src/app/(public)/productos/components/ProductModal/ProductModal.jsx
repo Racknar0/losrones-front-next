@@ -1,7 +1,7 @@
 'use client';
 
 import usePublicCart from '@store/usePublicCart';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import './ProductModal.scss';
 
 const BACK_HOST = (process.env.NEXT_PUBLIC_BACK_HOST || '').replace(/\/+$/, '');
@@ -29,21 +29,19 @@ const ProductModal = ({ product, onClose }) => {
   const [added, setAdded] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
-  if (!product) return null;
-
   const productImages = useMemo(() => {
+    if (!product) return [];
+
     const gallery = Array.isArray(product.gallery)
       ? product.gallery.map((entry) => String(entry)).filter(Boolean)
       : [];
 
     return [...new Set([product.image, ...gallery].filter(Boolean))];
-  }, [product.gallery, product.image]);
+  }, [product]);
 
   const activeImage = productImages[activeImageIndex] || productImages[0] || null;
 
-  useEffect(() => {
-    setActiveImageIndex(0);
-  }, [product.id]);
+  if (!product) return null;
 
   const handlePrevImage = () => {
     if (productImages.length <= 1) return;
@@ -114,7 +112,7 @@ const ProductModal = ({ product, onClose }) => {
                           className={`pm__thumb ${index === activeImageIndex ? 'pm__thumb--active' : ''}`}
                           onClick={() => setActiveImageIndex(index)}
                           aria-label={`Ver imagen ${index + 1}`}
-                          aria-selected={index === activeImageIndex}
+                          aria-pressed={index === activeImageIndex}
                         >
                           <img src={getMediaSrc(image)} alt={`${product.name} ${index + 1}`} loading="lazy" />
                         </button>

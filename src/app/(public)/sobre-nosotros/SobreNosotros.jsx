@@ -57,7 +57,7 @@ const SobreNosotros = () => {
             <span className="about__stat-label">Clientes felices</span>
           </div>
           <div className="about__stat">
-            <span className="about__stat-number">4</span>
+            <span className="about__stat-number">3</span>
             <span className="about__stat-label">Tiendas en México</span>
           </div>
           <div className="about__stat">
