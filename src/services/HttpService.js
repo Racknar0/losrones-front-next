@@ -72,4 +72,12 @@ export default class HttpService {
       return response;
     });
   }
+
+  async patchFormData(url, data) {
+    return axiosInstance.patch(url, data, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }).then((response) => {
+      return response;
+    });
+  }
 }

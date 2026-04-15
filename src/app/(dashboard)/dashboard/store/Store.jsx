@@ -928,7 +928,7 @@ const Store = () => {
 
     try {
       setSavingHighlightBlock(true);
-      const response = await httpService.patchData('/store-items/highlight-block', payload);
+      const response = await httpService.patchFormData('/store-items/highlight-block', payload);
 
       if (response.status === 200) {
         const savedBlock = response.data?.highlightBlock || {};
