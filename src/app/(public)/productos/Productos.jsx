@@ -1,10 +1,52 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import usePublicCart from '@store/usePublicCart';
-import { PRODUCTS, CATEGORIES } from './data/products';
+import HttpService from '@services/HttpService';
+import useChunkedVirtualizedList from '@helpers/useChunkedVirtualizedList';
 import ProductModal from './components/ProductModal/ProductModal';
 import './Productos.scss';
+
+const ALL_CATEGORY_ID = 'all';
+const CATALOG_BATCH_SIZE = 24;
+const BACK_HOST = (process.env.NEXT_PUBLIC_BACK_HOST || '').replace(/\/+$/, '');
+const httpService = new HttpService();
+
+const getMediaSrc = (mediaPath) => {
+  if (!mediaPath) return '';
+  if (/^https?:\/\//i.test(mediaPath)) return mediaPath;
+
+  const normalizedPath = String(mediaPath).replace(/^\/+/, '');
+  if (!BACK_HOST) return `/${normalizedPath}`;
+  return `${BACK_HOST}/${normalizedPath}`;
+};
+
+const toNumber = (value, fallback = 0) => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+};
+
+const normalizeProduct = (item) => {
+  const price = toNumber(item?.price, 0);
+  const originalPrice = toNumber(item?.originalPrice, price);
+  const rawGallery = Array.isArray(item?.gallery)
+    ? item.gallery.map((entry) => String(entry)).filter(Boolean)
+    : [];
+  const image = item?.image || rawGallery[0] || null;
+  const gallery = [...new Set([image, ...rawGallery].filter(Boolean))];
+
+  return {
+    id: item?.id,
+    name: item?.name || 'Producto sin nombre',
+    description: item?.description || 'Sin descripcion disponible.',
+    price,
+    originalPrice,
+    rating: toNumber(item?.rating, 5),
+    image,
+    gallery,
+    categoryIds: Array.isArray(item?.categoryIds) ? item.categoryIds : [],
+  };
+};
 
 const Stars = ({ count = 5, max = 5 }) => (
   <>
@@ -16,17 +58,108 @@ const Stars = ({ count = 5, max = 5 }) => (
 
 const Productos = () => {
   const [search, setSearch] = useState('');
-  const [activeCategory, setActiveCategory] = useState('all');
+  const [activeCategory, setActiveCategory] = useState(ALL_CATEGORY_ID);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [categories, setCategories] = useState([{ id: ALL_CATEGORY_ID, label: 'Todos' }]);
+  const [products, setProducts] = useState([]);
+  const [loadingCategories, setLoadingCategories] = useState(true);
+  const [loadingProducts, setLoadingProducts] = useState(true);
+  const [fetchError, setFetchError] = useState('');
+  const productsRequestRef = useRef(0);
   const addItem = usePublicCart((s) => s.addItem);
 
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadCategories = async () => {
+      try {
+        setLoadingCategories(true);
+        const response = await httpService.getData('/store-items/public/categories');
+        const apiCategories = Array.isArray(response?.data) ? response.data : [];
+        const normalizedCategories = apiCategories.map((category) => ({
+          id: String(category.id),
+          label: category.name,
+        }));
+
+        if (!isMounted) return;
+        setCategories([{ id: ALL_CATEGORY_ID, label: 'Todos' }, ...normalizedCategories]);
+      } catch (error) {
+        console.error('Error loading public categories:', error);
+        if (!isMounted) return;
+        setCategories([{ id: ALL_CATEGORY_ID, label: 'Todos' }]);
+      } finally {
+        if (isMounted) {
+          setLoadingCategories(false);
+        }
+      }
+    };
+
+    loadCategories();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+    const requestId = productsRequestRef.current + 1;
+    productsRequestRef.current = requestId;
+
+    const loadProducts = async () => {
+      try {
+        setLoadingProducts(true);
+        setFetchError('');
+
+        const query = new URLSearchParams();
+        if (activeCategory !== ALL_CATEGORY_ID) {
+          query.set('categoryId', activeCategory);
+        }
+
+        const endpoint = query.toString()
+          ? `/store-items/public/products?${query.toString()}`
+          : '/store-items/public/products';
+
+        const response = await httpService.getData(endpoint);
+        const apiProducts = Array.isArray(response?.data?.items) ? response.data.items : [];
+
+        if (!isMounted || requestId !== productsRequestRef.current) return;
+        setProducts(apiProducts.map(normalizeProduct));
+      } catch (error) {
+        console.error('Error loading public products:', error);
+
+        if (!isMounted || requestId !== productsRequestRef.current) return;
+        setProducts([]);
+        setFetchError('No se pudieron cargar los productos. Intenta nuevamente en un momento.');
+      } finally {
+        if (isMounted && requestId === productsRequestRef.current) {
+          setLoadingProducts(false);
+        }
+      }
+    };
+
+    loadProducts();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [activeCategory]);
+
   const filtered = useMemo(() => {
-    return PRODUCTS.filter((p) => {
-      const matchCat = activeCategory === 'all' || p.category === activeCategory;
-      const matchSearch = p.name.toLowerCase().includes(search.toLowerCase());
-      return matchCat && matchSearch;
+    const searchValue = search.trim().toLowerCase();
+    if (!searchValue) return products;
+
+    return products.filter((product) => {
+      const name = String(product.name || '').toLowerCase();
+      const description = String(product.description || '').toLowerCase();
+      return name.includes(searchValue) || description.includes(searchValue);
     });
-  }, [search, activeCategory]);
+  }, [search, products]);
+
+  const { visibleItems, hasMore, loaderRef } = useChunkedVirtualizedList(filtered, {
+    batchSize: CATALOG_BATCH_SIZE,
+    resetKey: `${activeCategory}-${search}-${filtered.length}`,
+  });
 
   const handleQuickAdd = (e, product) => {
     e.stopPropagation();
@@ -64,11 +197,12 @@ const Productos = () => {
           </div>
 
           <div className="prod__categories">
-            {CATEGORIES.map((cat) => (
+            {categories.map((cat) => (
               <button
                 key={cat.id}
                 className={`prod__cat-btn ${activeCategory === cat.id ? 'prod__cat-btn--active' : ''}`}
                 onClick={() => setActiveCategory(cat.id)}
+                disabled={loadingCategories}
               >
                 {cat.label}
               </button>
@@ -82,15 +216,30 @@ const Productos = () => {
         </p>
 
         {/* ─── Grid ─── */}
-        {filtered.length === 0 ? (
+        {loadingProducts ? (
+          <div className="prod__empty">
+            <span>⏳</span>
+            <p>Cargando productos...</p>
+          </div>
+        ) : fetchError ? (
+          <div className="prod__empty">
+            <span>⚠️</span>
+            <p>{fetchError}</p>
+          </div>
+        ) : filtered.length === 0 ? (
           <div className="prod__empty">
             <span>🔍</span>
             <p>No se encontraron productos</p>
           </div>
         ) : (
-          <div className="prod__grid">
-            {filtered.map((product) => {
-              const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
+          <>
+            <div className="prod__grid">
+            {visibleItems.map((product) => {
+              const hasDiscount = product.originalPrice > product.price && product.originalPrice > 0;
+              const discount = hasDiscount
+                ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+                : 0;
+
               return (
                 <div
                   className="prod__card"
@@ -98,7 +247,16 @@ const Productos = () => {
                   onClick={() => setSelectedProduct(product)}
                 >
                   <div className="prod__card-image">
-                    📷
+                    {product.image ? (
+                      <img
+                        className="prod__card-img"
+                        src={getMediaSrc(product.image)}
+                        alt={product.name}
+                        loading="lazy"
+                      />
+                    ) : (
+                      <span className="prod__card-placeholder">📷</span>
+                    )}
                     {discount > 0 && (
                       <span className="prod__card-discount">-{discount}%</span>
                     )}
@@ -108,12 +266,9 @@ const Productos = () => {
                       <Stars count={product.rating} />
                     </div>
                     <h3 className="prod__card-name">{product.name}</h3>
-                    {product.weight && (
-                      <span className="prod__card-weight">{product.weight}</span>
-                    )}
                     <div className="prod__card-prices">
                       <span className="prod__card-price">${product.price.toFixed(2)}</span>
-                      {product.originalPrice > product.price && (
+                      {hasDiscount && (
                         <span className="prod__card-original">${product.originalPrice.toFixed(2)}</span>
                       )}
                     </div>
@@ -127,7 +282,13 @@ const Productos = () => {
                 </div>
               );
             })}
-          </div>
+            </div>
+            {hasMore && (
+              <div ref={loaderRef} className="prod__loader-trigger">
+                Cargando mas productos...
+              </div>
+            )}
+          </>
         )}
       </div>
 

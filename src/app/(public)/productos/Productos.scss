@@ -127,6 +127,11 @@ $deep-accent: #5C1A3A;
     transition: all 0.25s ease;
     font-family: inherit;
 
+    &:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
     &:hover {
       border-color: $dark-plum;
     }
@@ -189,6 +194,18 @@ $deep-accent: #5C1A3A;
     justify-content: center;
     font-size: 2rem;
     position: relative;
+  }
+
+  &__card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  &__card-placeholder {
+    font-size: 2rem;
+    line-height: 1;
   }
 
   &__card-discount {
@@ -274,6 +291,15 @@ $deep-accent: #5C1A3A;
       background: $deep-accent;
       transform: scale(1.02);
     }
+  }
+
+  &__loader-trigger {
+    margin-top: 1rem;
+    text-align: center;
+    color: #7c6d9f;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.75rem 0;
   }
 }
 

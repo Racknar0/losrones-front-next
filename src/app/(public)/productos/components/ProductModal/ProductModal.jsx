@@ -1,8 +1,19 @@
 'use client';
 
 import usePublicCart from '@store/usePublicCart';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import './ProductModal.scss';
+
+const BACK_HOST = (process.env.NEXT_PUBLIC_BACK_HOST || '').replace(/\/+$/, '');
+
+const getMediaSrc = (mediaPath) => {
+  if (!mediaPath) return '';
+  if (/^https?:\/\//i.test(mediaPath)) return mediaPath;
+
+  const normalizedPath = String(mediaPath).replace(/^\/+/, '');
+  if (!BACK_HOST) return `/${normalizedPath}`;
+  return `${BACK_HOST}/${normalizedPath}`;
+};
 
 const Stars = ({ count = 5, max = 5 }) => (
   <>
@@ -16,8 +27,37 @@ const ProductModal = ({ product, onClose }) => {
   const addItem = usePublicCart((s) => s.addItem);
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   if (!product) return null;
+
+  const productImages = useMemo(() => {
+    const gallery = Array.isArray(product.gallery)
+      ? product.gallery.map((entry) => String(entry)).filter(Boolean)
+      : [];
+
+    return [...new Set([product.image, ...gallery].filter(Boolean))];
+  }, [product.gallery, product.image]);
+
+  const activeImage = productImages[activeImageIndex] || productImages[0] || null;
+
+  useEffect(() => {
+    setActiveImageIndex(0);
+  }, [product.id]);
+
+  const handlePrevImage = () => {
+    if (productImages.length <= 1) return;
+    setActiveImageIndex((currentIndex) =>
+      currentIndex === 0 ? productImages.length - 1 : currentIndex - 1
+    );
+  };
+
+  const handleNextImage = () => {
+    if (productImages.length <= 1) return;
+    setActiveImageIndex((currentIndex) =>
+      currentIndex === productImages.length - 1 ? 0 : currentIndex + 1
+    );
+  };
 
   const handleAdd = () => {
     addItem(product, qty);
@@ -25,7 +65,10 @@ const ProductModal = ({ product, onClose }) => {
     setTimeout(() => setAdded(false), 1500);
   };
 
-  const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
+  const hasDiscount = Number(product.originalPrice) > Number(product.price) && Number(product.originalPrice) > 0;
+  const discount = hasDiscount
+    ? Math.round(((Number(product.originalPrice) - Number(product.price)) / Number(product.originalPrice)) * 100)
+    : 0;
 
   return (
     <>
@@ -36,7 +79,53 @@ const ProductModal = ({ product, onClose }) => {
         <div className="pm__body">
           {/* Image */}
           <div className="pm__image-area">
-            <div className="pm__image-placeholder">📷 Imagen producto</div>
+            {activeImage ? (
+              <>
+                <img
+                  className="pm__image"
+                  src={getMediaSrc(activeImage)}
+                  alt={product.name}
+                  loading="lazy"
+                />
+                {productImages.length > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      className="pm__image-nav pm__image-nav--prev"
+                      onClick={handlePrevImage}
+                      aria-label="Imagen anterior"
+                    >
+                      ‹
+                    </button>
+                    <button
+                      type="button"
+                      className="pm__image-nav pm__image-nav--next"
+                      onClick={handleNextImage}
+                      aria-label="Imagen siguiente"
+                    >
+                      ›
+                    </button>
+
+                    <div className="pm__thumbs" role="tablist" aria-label="Galeria de producto">
+                      {productImages.map((image, index) => (
+                        <button
+                          key={`${image}-${index}`}
+                          type="button"
+                          className={`pm__thumb ${index === activeImageIndex ? 'pm__thumb--active' : ''}`}
+                          onClick={() => setActiveImageIndex(index)}
+                          aria-label={`Ver imagen ${index + 1}`}
+                          aria-selected={index === activeImageIndex}
+                        >
+                          <img src={getMediaSrc(image)} alt={`${product.name} ${index + 1}`} loading="lazy" />
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </>
+            ) : (
+              <div className="pm__image-placeholder">📷 Imagen producto</div>
+            )}
             {discount > 0 && (
               <span className="pm__discount-badge">-{discount}%</span>
             )}
@@ -59,7 +148,7 @@ const ProductModal = ({ product, onClose }) => {
 
             <div className="pm__prices">
               <span className="pm__price-current">${product.price.toFixed(2)}</span>
-              {product.originalPrice > product.price && (
+              {hasDiscount && (
                 <span className="pm__price-original">${product.originalPrice.toFixed(2)}</span>
               )}
             </div>
