@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import HttpService from '@services/HttpService';
 import useChunkedVirtualizedList from '@helpers/useChunkedVirtualizedList';
@@ -108,7 +108,6 @@ const Store = () => {
     alias: '',
     webPrice: '',
     compareAtPrice: '',
-    shortDescription: '',
     longDescription: '',
     isPublished: false,
     categoryIds: [],
@@ -116,6 +115,7 @@ const Store = () => {
     newImages: [],
   });
   const [sourceListRoot, setSourceListRoot] = useState(null);
+  const sourceAutoLoadFrameRef = useRef(null);
 
   const loadSourceProducts = async () => {
     try {
@@ -468,6 +468,34 @@ const Store = () => {
     setSourceListRoot(node || null);
   }, []);
 
+  const handleSourceListScroll = useCallback((event) => {
+    if (loadingSource || !hasMoreSourceProducts) {
+      return;
+    }
+
+    if (sourceAutoLoadFrameRef.current !== null) {
+      return;
+    }
+
+    const listNode = event.currentTarget;
+    sourceAutoLoadFrameRef.current = window.requestAnimationFrame(() => {
+      sourceAutoLoadFrameRef.current = null;
+
+      const remainingScroll = listNode.scrollHeight - listNode.scrollTop - listNode.clientHeight;
+      if (remainingScroll <= 96) {
+        loadMoreSourceProducts();
+      }
+    });
+  }, [hasMoreSourceProducts, loadMoreSourceProducts, loadingSource]);
+
+  useEffect(() => {
+    return () => {
+      if (sourceAutoLoadFrameRef.current !== null) {
+        window.cancelAnimationFrame(sourceAutoLoadFrameRef.current);
+      }
+    };
+  }, []);
+
   const handleToggleSourceProduct = (productId) => {
     setSelectedSourceIds((prev) => {
       if (prev.includes(productId)) {
@@ -525,8 +553,7 @@ const Store = () => {
       alias: item.alias || '',
       webPrice: item.webPrice ?? '',
       compareAtPrice: item.compareAtPrice ?? '',
-      shortDescription: item.shortDescription || '',
-      longDescription: item.longDescription || '',
+      longDescription: item.longDescription || item.shortDescription || '',
       isPublished: Boolean(item.isPublished),
       categoryIds: item.categories?.map((category) => category.id) || [],
       existingGallery,
@@ -613,8 +640,7 @@ const Store = () => {
     }
 
     const alias = form.alias.trim();
-    const shortDescription = form.shortDescription.trim();
-    const longDescription = form.longDescription.trim();
+    const description = form.longDescription.trim();
     const selectedCategories = Array.isArray(form.categoryIds) ? form.categoryIds : [];
     const totalImages = (form.existingGallery?.length || 0) + (form.newImages?.length || 0);
 
@@ -633,13 +659,8 @@ const Store = () => {
       return;
     }
 
-    if (!shortDescription) {
-      errorAlert('Dato requerido', 'La descripcion corta es obligatoria');
-      return;
-    }
-
-    if (!longDescription) {
-      errorAlert('Dato requerido', 'La descripcion larga es obligatoria');
+    if (!description) {
+      errorAlert('Dato requerido', 'La descripcion es obligatoria');
       return;
     }
 
@@ -652,8 +673,8 @@ const Store = () => {
     payload.append('alias', alias);
     payload.append('webPrice', String(form.webPrice));
     payload.append('compareAtPrice', form.compareAtPrice === '' ? '' : String(form.compareAtPrice));
-    payload.append('shortDescription', shortDescription);
-    payload.append('longDescription', longDescription);
+    payload.append('shortDescription', description);
+    payload.append('longDescription', description);
     payload.append('isPublished', String(form.isPublished));
     payload.append('categoryIds', JSON.stringify(selectedCategories));
     payload.append('remainingGallery', JSON.stringify(form.existingGallery));
@@ -1133,7 +1154,7 @@ const Store = () => {
             </p>
           </div>
         </div>
-        <span className={`badge ${statusBadge.className}`}>{statusBadge.label}</span>
+        <span className={`badge store_manager_status_chip ${statusBadge.className}`}>{statusBadge.label}</span>
       </div>
     );
   };
@@ -1239,7 +1260,11 @@ const Store = () => {
                   <Spinner color="#6564d8" />
                 </div>
               ) : (
-                <div className="store_list store_list--source" ref={handleSourceListRef}>
+                <div
+                  className="store_list store_list--source"
+                  ref={handleSourceListRef}
+                  onScroll={handleSourceListScroll}
+                >
                   {visibleSourceProducts.map((product) => {
                     const isSelected = selectedSourceIds.includes(product.id);
                     const alreadyInStore = Boolean(product.storeItem);
@@ -1824,8 +1849,8 @@ const Store = () => {
                     {draftStoreItems.length === 0 ? (
                       <p className="store_gallery_empty">No hay borradores.</p>
                     ) : (
-                      <>
-                        <div className="store_list">
+                      <div className="store_manager_scroll">
+                        <div className="store_list store_list--manager">
                           {draftItemsWithCategory.map((item) => renderStoreItemButton(item))}
                         </div>
 
@@ -1834,12 +1859,12 @@ const Store = () => {
                           {draftItemsWithoutCategory.length === 0 ? (
                             <p className="store_gallery_empty">No hay items sin categoria.</p>
                           ) : (
-                            <div className="store_list">
+                            <div className="store_list store_list--manager">
                               {draftItemsWithoutCategory.map((item) => renderStoreItemButton(item))}
                             </div>
                           )}
                         </div>
-                      </>
+                      </div>
                     )}
                   </div>
 
@@ -1848,14 +1873,16 @@ const Store = () => {
                     {publishedByCategory.length === 0 ? (
                       <p className="store_gallery_empty">No hay items publicados por categoria.</p>
                     ) : (
-                      publishedByCategory.map((group) => (
-                        <div key={group.category.id} className="store_subsection">
-                          <h5 className="store_subsection_title">{group.category.name}</h5>
-                          <div className="store_list">
-                            {group.items.map((item) => renderStoreItemButton(item))}
+                      <div className="store_manager_scroll">
+                        {publishedByCategory.map((group) => (
+                          <div key={group.category.id} className="store_subsection">
+                            <h5 className="store_subsection_title">{group.category.name}</h5>
+                            <div className="store_list store_list--manager">
+                              {group.items.map((item) => renderStoreItemButton(item))}
+                            </div>
                           </div>
-                        </div>
-                      ))
+                        ))}
+                      </div>
                     )}
                   </div>
                 </div>
@@ -1945,19 +1972,9 @@ const Store = () => {
                   </div>
 
                   <div className="mb-2">
-                    <label className="form-label">Descripcion corta</label>
-                    <input
-                      className="form-control"
-                      value={form.shortDescription}
-                      onChange={(e) => setForm((prev) => ({ ...prev, shortDescription: e.target.value }))}
-                      required
-                    />
-                  </div>
-
-                  <div className="mb-2">
-                    <label className="form-label">Descripcion larga</label>
+                    <label className="form-label">Descripcion</label>
                     <textarea
-                      rows={3}
+                      rows={4}
                       className="form-control"
                       value={form.longDescription}
                       onChange={(e) => setForm((prev) => ({ ...prev, longDescription: e.target.value }))}

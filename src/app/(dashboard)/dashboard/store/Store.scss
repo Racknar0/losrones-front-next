@@ -100,6 +100,7 @@
   max-height: 520px;
   overflow-y: auto;
   padding-right: 4px;
+  overscroll-behavior: contain;
 }
 
 .store_list--source {
@@ -111,6 +112,19 @@
 .store_subsection .store_list,
 .store_manager_block > .store_list {
   max-height: 220px;
+}
+
+.store_manager_scroll {
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 4px;
+  overscroll-behavior: contain;
+}
+
+.store_list--manager {
+  max-height: none;
+  overflow: visible;
+  padding-right: 0;
 }
 
 .store_list_item {
@@ -206,6 +220,15 @@
   align-self: flex-start;
   margin-bottom: 4px;
   font-size: 0.72rem;
+}
+
+.store_manager_status_chip {
+  font-size: 0.64rem;
+  font-weight: 700;
+  line-height: 1;
+  padding: 0.2rem 0.42rem;
+  border-radius: 999px;
+  white-space: nowrap;
 }
 
 .store_source_prices {
