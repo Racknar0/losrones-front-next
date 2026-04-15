@@ -1,7 +1,8 @@
 'use client';
 
 import usePublicCart from '@store/usePublicCart';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import './ProductModal.scss';
 
 const BACK_HOST = (process.env.NEXT_PUBLIC_BACK_HOST || '').replace(/\/+$/, '');
@@ -29,6 +30,17 @@ const ProductModal = ({ product, onClose }) => {
   const [added, setAdded] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
+  useEffect(() => {
+    if (!product) return undefined;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [product]);
+
   const productImages = useMemo(() => {
     if (!product) return [];
 
@@ -41,7 +53,7 @@ const ProductModal = ({ product, onClose }) => {
 
   const activeImage = productImages[activeImageIndex] || productImages[0] || null;
 
-  if (!product) return null;
+  if (!product || typeof document === 'undefined') return null;
 
   const handlePrevImage = () => {
     if (productImages.length <= 1) return;
@@ -68,7 +80,7 @@ const ProductModal = ({ product, onClose }) => {
     ? Math.round(((Number(product.originalPrice) - Number(product.price)) / Number(product.originalPrice)) * 100)
     : 0;
 
-  return (
+  const modalContent = (
     <>
       <div className="pm__overlay" onClick={onClose} />
       <div className="pm">
@@ -173,6 +185,8 @@ const ProductModal = ({ product, onClose }) => {
       </div>
     </>
   );
+
+  return createPortal(modalContent, document.body);
 };
 
 export default ProductModal;

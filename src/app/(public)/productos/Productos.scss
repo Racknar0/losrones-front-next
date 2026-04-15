@@ -162,6 +162,13 @@ $deep-accent: #5C1A3A;
     }
   }
 
+  &__spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
   /* ─── Grid ─── */
   &__grid {
     display: grid;
@@ -295,6 +302,10 @@ $deep-accent: #5C1A3A;
 
   &__loader-trigger {
     margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
     text-align: center;
     color: #7c6d9f;
     font-size: 0.85rem;

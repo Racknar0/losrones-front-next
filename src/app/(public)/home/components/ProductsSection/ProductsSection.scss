@@ -139,6 +139,13 @@ $cream: #FDF8F1;
     padding: 2rem 1rem;
   }
 
+  &__spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 0.85rem;
+  }
+
   &__dot {
     width: 8px;
     height: 8px;

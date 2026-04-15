@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import usePublicCart from '@store/usePublicCart';
 import HttpService from '@services/HttpService';
 import useChunkedVirtualizedList from '@helpers/useChunkedVirtualizedList';
+import Spinner from '@admin-shared/spinner/Spinner';
 import ProductModal from './components/ProductModal/ProductModal';
 import './Productos.scss';
 
@@ -225,7 +226,9 @@ const Productos = () => {
         {/* ─── Grid ─── */}
         {loadingProducts ? (
           <div className="prod__empty">
-            <span>⏳</span>
+            <div className="prod__spinner">
+              <Spinner color="#4932a5" />
+            </div>
             <p>Cargando productos...</p>
           </div>
         ) : fetchError ? (
@@ -292,6 +295,7 @@ const Productos = () => {
             </div>
             {hasMore && (
               <div ref={loaderRef} className="prod__loader-trigger">
+                <Spinner color="#4932a5" styles={{ width: '26px', height: '26px' }} />
                 Cargando mas productos...
               </div>
             )}

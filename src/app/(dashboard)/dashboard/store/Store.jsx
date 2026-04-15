@@ -1343,7 +1343,7 @@ const Store = () => {
                         <p className="store_list_title">{item.alias}</p>
                         <p className="store_list_subtitle">{item.product?.name} | ${item.webPrice}</p>
                       </div>
-                      <span className={`badge ${item.isPublished ? 'bg-success' : 'bg-warning text-dark'}`}>
+                      <span className={`badge store_created_status_chip ${item.isPublished ? 'bg-success' : 'bg-warning text-dark'}`}>
                         {item.isPublished ? 'Publicado' : 'Borrador'}
                       </span>
                     </div>

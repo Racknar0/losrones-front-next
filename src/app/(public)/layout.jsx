@@ -7,8 +7,8 @@ import Navbar from './shared/Navbar/Navbar';
 import CartSidebar from './shared/CartSidebar/CartSidebar';
 import usePublicCart from '@store/usePublicCart';
 
-const SECTION_ANIMATIONS = ['fade-up', 'fade-right', 'fade-left'];
-const CARD_ANIMATIONS = ['zoom-in-up', 'flip-left', 'fade-up'];
+const SECTION_ANIMATIONS = ['fade-up', 'zoom-in-up', 'fade-up'];
+const CARD_ANIMATIONS = ['zoom-in-up', 'fade-up', 'fade-down'];
 
 const applyAosAttributes = () => {
   if (typeof document === 'undefined') return;

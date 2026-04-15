@@ -238,6 +238,15 @@
   font-size: 0.72rem;
 }
 
+.store_created_status_chip {
+  font-size: 0.64rem;
+  font-weight: 700;
+  line-height: 1;
+  padding: 0.2rem 0.42rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
 .store_manager_status_chip {
   font-size: 0.64rem;
   font-weight: 700;
@@ -470,6 +479,11 @@
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+
+  .btn {
+    font-size: 0.78rem;
+    padding: 0.28rem 0.54rem;
+  }
 }
 
 .store_news_editor {
@@ -479,14 +493,40 @@
 
   .ql-container.ql-snow {
     border-radius: 0 0 8px 8px;
-    min-height: 180px;
+    min-height: 128px;
+    max-height: 220px;
+    overflow-y: auto;
     font-size: 0.86rem;
+  }
+
+  .ql-editor {
+    min-height: 128px;
+    padding: 10px;
   }
 }
 
 .is-selected-news {
   border-color: #4932a5;
   background-color: #f4f1ff;
+}
+
+.store_news_tag_chip,
+.store_news_status_chip {
+  font-size: 0.64rem;
+  font-weight: 700;
+  line-height: 1;
+  padding: 0.2rem 0.42rem;
+  border-radius: 999px;
+}
+
+.store_news_grid {
+  .store_card {
+    min-height: 0;
+  }
+
+  .store_list {
+    max-height: 380px;
+  }
 }
 
 .store_price_grid {

@@ -186,6 +186,12 @@ export default function Page() {
                       </option>
                     ))}
                   </select>
+                  {loadingTiendas && (
+                    <div className="loading_tiendas_indicator" aria-live="polite">
+                      <Spinner color="#ffffff" styles={{ width: '26px', height: '26px' }} />
+                      <span>Cargando tiendas...</span>
+                    </div>
+                  )}
                 </div>
 
                 {submitting ? (

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import usePublicCart from '@store/usePublicCart';
+import Spinner from '@admin-shared/spinner/Spinner';
 import HttpService from '@services/HttpService';
 import ProductModal from '../../../productos/components/ProductModal/ProductModal';
 import './ProductsSection.scss';
@@ -239,7 +240,12 @@ const ProductsSection = () => {
         </div>
 
         {loadingProducts ? (
-          <div className="products__empty">Cargando favoritos...</div>
+          <div className="products__empty">
+            <div className="products__spinner">
+              <Spinner color="#4932a5" />
+            </div>
+            Cargando favoritos...
+          </div>
         ) : fetchError ? (
           <div className="products__empty">{fetchError}</div>
         ) : filteredProducts.length === 0 ? (
