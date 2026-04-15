@@ -1940,15 +1940,16 @@ const Store = () => {
                     </div>
                   </div>
 
-                  <div className="mb-2 form-check d-flex align-items-center gap-2">
+                  <label className="mb-2 store_publish_toggle" htmlFor="store-item-published">
                     <input
+                      id="store-item-published"
                       className="form-check-input"
                       type="checkbox"
                       checked={form.isPublished}
                       onChange={(e) => setForm((prev) => ({ ...prev, isPublished: e.target.checked }))}
                     />
-                    <label className="form-check-label">Publicado en tienda</label>
-                  </div>
+                    <span className="form-check-label">Publicado en tienda</span>
+                  </label>
 
                   <div className="mb-2">
                     <label className="form-label">Categorias de tienda</label>
