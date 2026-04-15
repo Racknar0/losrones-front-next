@@ -102,6 +102,12 @@
   padding-right: 4px;
 }
 
+.store_list--source {
+  height: 520px;
+  overscroll-behavior: contain;
+  contain: layout paint;
+}
+
 .store_subsection .store_list,
 .store_manager_block > .store_list {
   max-height: 220px;

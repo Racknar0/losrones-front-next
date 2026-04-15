@@ -10,6 +10,8 @@ const useChunkedVirtualizedList = (
     root = null,
     rootMargin = DEFAULT_ROOT_MARGIN,
     resetKey,
+    enableObserver = true,
+    enableViewportCheck = true,
   } = {}
 ) => {
   const safeItems = Array.isArray(items) ? items : [];
@@ -27,6 +29,10 @@ const useChunkedVirtualizedList = (
   }, [batchSize, resetKey]);
 
   useEffect(() => {
+    if (!enableObserver) {
+      return undefined;
+    }
+
     const loaderNode = loaderRef.current;
     if (!loaderNode || visibleCount >= safeItems.length) {
       return undefined;
@@ -50,15 +56,29 @@ const useChunkedVirtualizedList = (
     return () => {
       observer.disconnect();
     };
-  }, [batchSize, loadMore, root, rootMargin, safeItems.length, visibleCount]);
+  }, [batchSize, enableObserver, loadMore, root, rootMargin, safeItems.length, visibleCount]);
 
   useEffect(() => {
+    if (!enableViewportCheck) {
+      return undefined;
+    }
+
     const loaderNode = loaderRef.current;
     if (!loaderNode || visibleCount >= safeItems.length) {
       return undefined;
     }
 
     const checkIfNeedsMore = () => {
+      if (root && root instanceof Element) {
+        const loaderRect = loaderNode.getBoundingClientRect();
+        const rootRect = root.getBoundingClientRect();
+
+        if (loaderRect.top <= rootRect.bottom + 120) {
+          loadMore();
+        }
+        return;
+      }
+
       const rect = loaderNode.getBoundingClientRect();
       const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
 
@@ -72,7 +92,7 @@ const useChunkedVirtualizedList = (
     return () => {
       window.cancelAnimationFrame(frameId);
     };
-  }, [loadMore, safeItems.length, visibleCount]);
+  }, [enableViewportCheck, loadMore, root, safeItems.length, visibleCount]);
 
   const visibleItems = useMemo(
     () => safeItems.slice(0, visibleCount),

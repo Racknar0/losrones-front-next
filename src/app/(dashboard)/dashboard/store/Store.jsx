@@ -115,6 +115,7 @@ const Store = () => {
     existingGallery: [],
     newImages: [],
   });
+  const [sourceListRoot, setSourceListRoot] = useState(null);
 
   const loadSourceProducts = async () => {
     try {
@@ -457,8 +458,15 @@ const Store = () => {
     loadMore: loadMoreSourceProducts,
   } = useChunkedVirtualizedList(filteredSourceProducts, {
     batchSize: 20,
+    root: sourceListRoot,
     resetKey: `${sourceSearch}|${filteredSourceProducts.length}`,
+    enableObserver: false,
+    enableViewportCheck: false,
   });
+
+  const handleSourceListRef = useCallback((node) => {
+    setSourceListRoot(node || null);
+  }, []);
 
   const handleToggleSourceProduct = (productId) => {
     setSelectedSourceIds((prev) => {
@@ -1231,7 +1239,7 @@ const Store = () => {
                   <Spinner color="#6564d8" />
                 </div>
               ) : (
-                <div className="store_list">
+                <div className="store_list store_list--source" ref={handleSourceListRef}>
                   {visibleSourceProducts.map((product) => {
                     const isSelected = selectedSourceIds.includes(product.id);
                     const alreadyInStore = Boolean(product.storeItem);
