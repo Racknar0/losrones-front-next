@@ -108,7 +108,7 @@ const Store = () => {
     alias: '',
     webPrice: '',
     compareAtPrice: '',
-    longDescription: '',
+    description: '',
     isPublished: false,
     categoryIds: [],
     existingGallery: [],
@@ -553,7 +553,7 @@ const Store = () => {
       alias: item.alias || '',
       webPrice: item.webPrice ?? '',
       compareAtPrice: item.compareAtPrice ?? '',
-      longDescription: item.longDescription || item.shortDescription || '',
+      description: item.description || '',
       isPublished: Boolean(item.isPublished),
       categoryIds: item.categories?.map((category) => category.id) || [],
       existingGallery,
@@ -640,7 +640,7 @@ const Store = () => {
     }
 
     const alias = form.alias.trim();
-    const description = form.longDescription.trim();
+    const description = form.description.trim();
     const selectedCategories = Array.isArray(form.categoryIds) ? form.categoryIds : [];
     const totalImages = (form.existingGallery?.length || 0) + (form.newImages?.length || 0);
 
@@ -673,8 +673,7 @@ const Store = () => {
     payload.append('alias', alias);
     payload.append('webPrice', String(form.webPrice));
     payload.append('compareAtPrice', form.compareAtPrice === '' ? '' : String(form.compareAtPrice));
-    payload.append('shortDescription', description);
-    payload.append('longDescription', description);
+    payload.append('description', description);
     payload.append('isPublished', String(form.isPublished));
     payload.append('categoryIds', JSON.stringify(selectedCategories));
     payload.append('remainingGallery', JSON.stringify(form.existingGallery));
@@ -1850,16 +1849,16 @@ const Store = () => {
                       <p className="store_gallery_empty">No hay borradores.</p>
                     ) : (
                       <div className="store_manager_scroll">
-                        <div className="store_list store_list--manager">
+                        <div className="store_manager_list">
                           {draftItemsWithCategory.map((item) => renderStoreItemButton(item))}
                         </div>
 
-                        <div className="store_subsection mt-3">
+                        <div className="store_subsection store_subsection--manager">
                           <h5 className="store_subsection_title">Sin categoria</h5>
                           {draftItemsWithoutCategory.length === 0 ? (
                             <p className="store_gallery_empty">No hay items sin categoria.</p>
                           ) : (
-                            <div className="store_list store_list--manager">
+                            <div className="store_manager_list">
                               {draftItemsWithoutCategory.map((item) => renderStoreItemButton(item))}
                             </div>
                           )}
@@ -1875,9 +1874,9 @@ const Store = () => {
                     ) : (
                       <div className="store_manager_scroll">
                         {publishedByCategory.map((group) => (
-                          <div key={group.category.id} className="store_subsection">
+                          <div key={group.category.id} className="store_subsection store_subsection--manager">
                             <h5 className="store_subsection_title">{group.category.name}</h5>
-                            <div className="store_list store_list--manager">
+                            <div className="store_manager_list">
                               {group.items.map((item) => renderStoreItemButton(item))}
                             </div>
                           </div>
@@ -1976,8 +1975,8 @@ const Store = () => {
                     <textarea
                       rows={4}
                       className="form-control"
-                      value={form.longDescription}
-                      onChange={(e) => setForm((prev) => ({ ...prev, longDescription: e.target.value }))}
+                      value={form.description}
+                      onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))}
                       required
                     />
                   </div>

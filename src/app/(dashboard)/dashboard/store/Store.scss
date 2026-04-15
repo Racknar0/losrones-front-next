@@ -109,19 +109,34 @@
   contain: layout paint;
 }
 
-.store_subsection .store_list,
-.store_manager_block > .store_list {
+.store_subsection .store_list:not(.store_list--manager),
+.store_manager_block > .store_list:not(.store_list--manager) {
   max-height: 220px;
 }
 
 .store_manager_scroll {
   max-height: 320px;
   overflow-y: auto;
+  overflow-x: hidden;
   padding-right: 4px;
   overscroll-behavior: contain;
+  contain: layout paint;
 }
 
-.store_list--manager {
+.store_manager_list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+}
+
+.store_subsection--manager {
+  margin-top: 12px;
+  min-height: 0;
+}
+
+.store_manager_scroll .store_manager_list {
+  height: auto;
   max-height: none;
   overflow: visible;
   padding-right: 0;
@@ -187,6 +202,7 @@
   border-radius: 10px;
   padding: 10px;
   background: #fcfdff;
+  overflow: hidden;
 }
 
 .store_block_title {
