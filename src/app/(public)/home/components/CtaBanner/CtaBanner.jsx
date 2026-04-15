@@ -5,7 +5,7 @@ const CtaBanner = () => {
   return (
     <section className="cta-banner" id="cta">
       <div className="cta-banner__container">
-        <h2 className="cta-banner__title">¿Listo para consentir a tu mascota?</h2>
+        <h2 className="cta-banner__title">¿Listo para consentir a tu cachorro?</h2>
         <p className="cta-banner__text">
           Explora nuestra tienda con más de 500 productos. Alimento, juguetes,
           accesorios y mucho más. Envío gratis a todo México.

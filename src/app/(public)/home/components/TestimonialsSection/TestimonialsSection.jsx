@@ -1,7 +1,7 @@
 import './TestimonialsSection.scss';
 
 const TESTIMONIALS = [
-  { name: 'María López', role: 'Mamá de Max (Golden)', text: 'Encontré todo lo que necesitaba: alimento premium, una cama ortopédica y juguetes. Max está feliz y yo también. ¡La mejor tienda de mascotas!', initials: 'ML' },
+  { name: 'María López', role: 'Mamá de Max (Golden)', text: 'Encontré todo lo que necesitaba: alimento premium, una cama ortopédica y juguetes. Max está feliz y yo también. ¡La mejor tienda de cachorros!', initials: 'ML' },
   { name: 'Carlos Rivera', role: 'Papá de Luna (Husky)', text: 'El envío fue súper rápido y la calidad de los productos es increíble. La correa deportiva que compré es perfecta para nuestras caminatas.', initials: 'CR' },
   { name: 'Ana Martínez', role: 'Mamá de Michi (Gato Persa)', text: 'Por fin una tienda que tiene variedad para gatos. Los juguetes con catnip volvieron loco a Michi y el alimento es de primera. Totalmente recomendada.', initials: 'AM' },
 ];

@@ -20,7 +20,7 @@ const PromoSection = () => {
 
         <div className="promo__content">
           <span className="promo__discount">Ahorra 20%</span>
-          <h2 className="promo__title">Consiente a tu mascota con lo mejor</h2>
+          <h2 className="promo__title">Consiente a tu cachorro con lo mejor</h2>
           <p className="promo__text">
             Aprovecha nuestra oferta en alimento, juguetes y accesorios.
             Todo lo que necesitas para que tu compañero peludo viva su mejor vida.

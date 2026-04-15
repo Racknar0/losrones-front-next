@@ -5,19 +5,19 @@ const WHY_US_ITEMS = [
     icon: '🛍️',
     color: 'pink',
     title: 'Todo en un Solo Lugar',
-    text: 'Alimento, juguetes, camas, correas, higiene y más. No necesitas ir a otra tienda, aquí encuentras todo para tu mascota.',
+    text: 'Alimento, juguetes, camas, correas, higiene y más. No necesitas ir a otra tienda, aquí encuentras todo para tu cachorro.',
   },
   {
     icon: '🚚',
     color: 'yellow',
     title: 'Envío Rápido y Gratis',
-    text: 'Recibe tu pedido en 24-48 horas. Envío gratis en compras mayores a $50. Porque tu mascota no puede esperar.',
+    text: 'Recibe tu pedido en 24-48 horas. Envío gratis en compras mayores a $50. Porque tu cachorro no puede esperar.',
   },
   {
     icon: '💛',
     color: 'plum',
     title: 'Atención Personalizada',
-    text: 'Nuestro equipo de amantes de las mascotas te asesora para elegir lo mejor según la raza, edad y necesidades de tu compañero.',
+    text: 'Nuestro equipo de amantes de las cachorros te asesora para elegir lo mejor según la raza, edad y necesidades de tu compañero.',
   },
 ];
 
@@ -26,7 +26,7 @@ const WhyUsSection = () => {
     <section className="why-us" id="why-us">
       <div className="why-us__container">
         <p className="why-us__eyebrow">¿Por Qué Elegirnos?</p>
-        <h2 className="why-us__title">La Tienda Favorita de las Mascotas</h2>
+        <h2 className="why-us__title">La Tienda Favorita de las Cachorros</h2>
 
         <div className="why-us__grid">
           {WHY_US_ITEMS.map((item, idx) => (

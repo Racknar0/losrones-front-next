@@ -13,7 +13,7 @@ const HeroSection = () => {
         <div className="hero__content">
           <span className="hero__badge">Tu Pet Shop de Confianza</span>
           <h1 className="hero__title">
-            Todo para tu mascota en un solo <span>lugar</span>.
+            Todo para tu cachorro en un solo <span>lugar</span>.
           </h1>
           <p className="hero__description">
             Alimento premium, juguetes irresistibles, accesorios y todo lo que tu
@@ -34,7 +34,7 @@ const HeroSection = () => {
             <div className="hero__image-placeholder">
               <Image
                 src={perroHero}
-                alt="Mascota feliz con productos de la tienda"
+                alt="Cachorro feliz con productos de la tienda"
                 width={400}
                 height={400}
                 loading="eager"
@@ -44,7 +44,7 @@ const HeroSection = () => {
           </div>
           <div className="hero__floating-badge hero__floating-badge--bottom">
             <span className="hero__floating-icon hero__floating-icon--pink">❤️</span>
-            +5,000 mascotas felices
+            +5,000 cachorros felices
           </div>
         </div>
       </div>

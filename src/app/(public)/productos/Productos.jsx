@@ -41,7 +41,7 @@ const Productos = () => {
           <p className="prod__eyebrow">Catálogo Completo</p>
           <h1 className="prod__title">Nuestros Productos</h1>
           <p className="prod__subtitle">
-            Encuentra todo lo que tu mascota necesita. Alimentos, snacks, juguetes y más.
+            Encuentra todo lo que tu cachorro necesita. Alimentos, snacks, juguetes y más.
           </p>
         </div>
       </div>

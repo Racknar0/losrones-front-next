@@ -45,7 +45,7 @@ const SobreNosotros = () => {
             </p>
             <p>
               Nuestro compromiso sigue siendo el mismo: ofrecer alimentos que realmente nutran, hechos con
-              ingredientes que nosotros mismos comeríamos. Porque tu mascota merece lo mejor.
+              ingredientes que nosotros mismos comeríamos. Porque tu cachorro merece lo mejor.
             </p>
           </div>
         </div>

@@ -8,7 +8,7 @@ const FooterSection = () => {
         <div>
           <div className="footer__brand-name">Losrones</div>
           <p className="footer__brand-desc">
-            Tu tienda de mascotas favorita en México. Alimento, juguetes,
+            Tu tienda de cachorros favorita en México. Alimento, juguetes,
             accesorios y todo lo que tu compañero peludo necesita para ser feliz.
           </p>
         </div>

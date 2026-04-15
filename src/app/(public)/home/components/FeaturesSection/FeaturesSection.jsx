@@ -15,7 +15,7 @@ const FeaturesSection = () => {
           <h2 className="features__card-title">Miles de productos en un solo lugar</h2>
           <p className="features__card-text">
             Desde alimento premium hasta juguetes, camas, accesorios y productos
-            de higiene. Todo lo que tu mascota necesita, siempre disponible.
+            de higiene. Todo lo que tu cachorro necesita, siempre disponible.
           </p>
           <div className="features__card-image">
             <Image
@@ -32,7 +32,7 @@ const FeaturesSection = () => {
           <span className="features__eyebrow">Asesoría Experta</span>
           <h2 className="features__card-title">Te ayudamos a elegir lo ideal</h2>
           <p className="features__card-text">
-            Nuestro equipo de expertos en mascotas te guía para encontrar los
+            Nuestro equipo de expertos en cachorros te guía para encontrar los
             productos perfectos según la raza, edad y necesidades de tu compañero.
           </p>
           <div className="features__card-image">
