@@ -23,14 +23,20 @@ const WHY_US_ITEMS = [
 
 const WhyUsSection = () => {
   return (
-    <section className="why-us" id="why-us">
+    <section className="why-us" id="why-us" data-aos="fade-up" data-aos-duration="850">
       <div className="why-us__container">
-        <p className="why-us__eyebrow">¿Por Qué Elegirnos?</p>
-        <h2 className="why-us__title">La Tienda Favorita de las Cachorros</h2>
+        <p className="why-us__eyebrow" data-aos="fade-up" data-aos-delay="60" data-aos-duration="800">¿Por Qué Elegirnos?</p>
+        <h2 className="why-us__title" data-aos="fade-up" data-aos-delay="120" data-aos-duration="850">La Tienda Favorita de las Cachorros</h2>
 
         <div className="why-us__grid">
           {WHY_US_ITEMS.map((item, idx) => (
-            <div className="why-us__card" key={idx}>
+            <div
+              className="why-us__card"
+              key={idx}
+              data-aos="fade-up"
+              data-aos-delay={String(180 + (idx * 90))}
+              data-aos-duration="850"
+            >
               <div className={`why-us__card-icon why-us__card-icon--${item.color}`}>
                 {item.icon}
               </div>
