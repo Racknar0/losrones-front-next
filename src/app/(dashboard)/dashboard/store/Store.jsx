@@ -41,6 +41,26 @@ const NEWS_EDITOR_FORMATS = [
   'blockquote',
 ];
 
+const NEWS_TAG_COLORS = ['#ffba30', '#27ae60', '#3498db', '#e74c3c', '#1abc9c'];
+const DEFAULT_NEWS_TAG_COLOR = NEWS_TAG_COLORS[0];
+
+const normalizeNewsTagColor = (value) => {
+  if (!value) return DEFAULT_NEWS_TAG_COLOR;
+  const normalized = String(value).trim().toLowerCase();
+  const withHash = normalized.startsWith('#') ? normalized : `#${normalized}`;
+  return NEWS_TAG_COLORS.includes(withHash) ? withHash : DEFAULT_NEWS_TAG_COLOR;
+};
+
+const getTagTextColor = (hexColor) => {
+  const safeHex = normalizeNewsTagColor(hexColor).replace('#', '');
+  const r = Number.parseInt(safeHex.slice(0, 2), 16);
+  const g = Number.parseInt(safeHex.slice(2, 4), 16);
+  const b = Number.parseInt(safeHex.slice(4, 6), 16);
+
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  return luminance > 0.65 ? '#1f2937' : '#ffffff';
+};
+
 const Store = () => {
   const httpService = new HttpService();
   const BACK_HOST = process.env.NEXT_PUBLIC_BACK_HOST;
@@ -95,6 +115,7 @@ const Store = () => {
     id: null,
     title: '',
     tag: '',
+    tagColor: DEFAULT_NEWS_TAG_COLOR,
     descriptionHtml: '',
     isActive: true,
     existingImage: null,
@@ -254,6 +275,7 @@ const Store = () => {
             id: selectedItem.id,
             title: selectedItem.title || '',
             tag: selectedItem.tag || '',
+            tagColor: normalizeNewsTagColor(selectedItem.tagColor),
             descriptionHtml: selectedItem.descriptionHtml || '',
             isActive: Boolean(selectedItem.isActive),
             existingImage: selectedItem.image || null,
@@ -265,6 +287,7 @@ const Store = () => {
             id: null,
             title: '',
             tag: '',
+            tagColor: DEFAULT_NEWS_TAG_COLOR,
             descriptionHtml: '',
             isActive: true,
             existingImage: null,
@@ -961,6 +984,7 @@ const Store = () => {
       id: null,
       title: '',
       tag: '',
+      tagColor: DEFAULT_NEWS_TAG_COLOR,
       descriptionHtml: '',
       isActive: true,
       existingImage: null,
@@ -974,6 +998,7 @@ const Store = () => {
       id: item.id,
       title: item.title || '',
       tag: item.tag || '',
+      tagColor: normalizeNewsTagColor(item.tagColor),
       descriptionHtml: item.descriptionHtml || '',
       isActive: Boolean(item.isActive),
       existingImage: item.image || null,
@@ -1008,6 +1033,7 @@ const Store = () => {
 
     const title = newsForm.title.trim();
     const tag = newsForm.tag.trim();
+    const tagColor = normalizeNewsTagColor(newsForm.tagColor);
     const descriptionHtml = newsForm.descriptionHtml || '';
     const descriptionText = descriptionHtml
       .replace(/<[^>]*>/g, ' ')
@@ -1033,6 +1059,7 @@ const Store = () => {
     const payload = new FormData();
     payload.append('title', title);
     payload.append('tag', tag);
+    payload.append('tagColor', tagColor);
     payload.append('descriptionHtml', descriptionHtml);
     payload.append('isActive', String(newsForm.isActive));
     payload.append('keepCurrentImage', String(Boolean(newsForm.existingImage && !newsForm.newImage)));
@@ -1723,7 +1750,17 @@ const Store = () => {
                           )}
                           <div>
                             <p className="store_list_title">{item.title}</p>
-                            {item.tag && <span className="badge bg-info text-dark store_news_tag_chip">#{item.tag}</span>}
+                            {item.tag && (
+                              <span
+                                className="badge store_news_tag_chip"
+                                style={{
+                                  backgroundColor: normalizeNewsTagColor(item.tagColor),
+                                  color: getTagTextColor(item.tagColor),
+                                }}
+                              >
+                                #{item.tag}
+                              </span>
+                            )}
                             <p className="store_list_subtitle">{item.excerpt || 'Sin descripcion'}</p>
                           </div>
                         </div>
@@ -1770,6 +1807,31 @@ const Store = () => {
                     value={newsForm.tag}
                     onChange={(e) => setNewsForm((prev) => ({ ...prev, tag: e.target.value }))}
                   />
+                </div>
+
+                <div className="mb-2">
+                  <label className="form-label">Color del tag</label>
+                  <div className="store_news_color_picker" role="radiogroup" aria-label="Selecciona color para el tag">
+                    {NEWS_TAG_COLORS.map((color) => {
+                      const isSelected = normalizeNewsTagColor(newsForm.tagColor) === color;
+
+                      return (
+                        <button
+                          key={color}
+                          type="button"
+                          className={`store_news_color_option ${isSelected ? 'is-selected' : ''}`}
+                          style={{ backgroundColor: color }}
+                          onClick={() => setNewsForm((prev) => ({ ...prev, tagColor: color }))}
+                          title={color}
+                          aria-label={`Seleccionar color ${color}`}
+                          aria-pressed={isSelected}
+                        />
+                      );
+                    })}
+                  </div>
+                  <small className="store_hint_text">
+                    Disponible solo en estos 5 colores: ffba30, 27ae60, 3498db, e74c3c y 1abc9c.
+                  </small>
                 </div>
 
                 <div className="mb-2">
