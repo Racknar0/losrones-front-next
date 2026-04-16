@@ -6,6 +6,7 @@ import AOS from 'aos';
 import twemoji from 'twemoji';
 import Navbar from './shared/Navbar/Navbar';
 import CartSidebar from './shared/CartSidebar/CartSidebar';
+import FooterSection from './home/components/FooterSection/FooterSection';
 import usePublicCart from '@store/usePublicCart';
 
 const TWEMOJI_OPTIONS = {
@@ -27,7 +28,8 @@ export default function PublicLayout({ children }) {
   const hydrate = usePublicCart((s) => s.hydrate);
   const pathname = usePathname();
   const isLoginRoute = pathname === '/login';
-  const whatsappLink = 'https://wa.me/522294324870';
+  const whatsappMessage = 'Hola, me gustaria ponerme en contacto para recibir informacion.';
+  const whatsappLink = `https://wa.me/522294366524?text=${encodeURIComponent(whatsappMessage)}`;
 
   useEffect(() => {
     hydrate();
@@ -67,6 +69,7 @@ export default function PublicLayout({ children }) {
       <main className="public-main">
         {children}
       </main>
+      {!isLoginRoute && <FooterSection />}
       {!isLoginRoute && (
         <a
           href={whatsappLink}

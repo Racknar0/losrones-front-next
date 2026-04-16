@@ -112,7 +112,7 @@ $deep-accent: #5C1A3A;
   /* ─── Contact Info ─── */
   &__info-section {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem;
   }
 
@@ -145,6 +145,8 @@ $deep-accent: #5C1A3A;
 
   &__info-btn {
     display: inline-flex;
+    align-items: center;
+    justify-content: center;
     background: $dark-plum;
     color: $cream;
     font-weight: 700;
@@ -164,12 +166,35 @@ $deep-accent: #5C1A3A;
       color: #fff;
       &:hover { background: color.adjust(#25D366, $lightness: -6%); }
     }
+
+    &--tiktok {
+      background: #101010;
+      color: #fff;
+    }
+
+    &--facebook {
+      background: #1877f2;
+      color: #fff;
+    }
+
+    &--instagram {
+      background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285aeb 90%);
+      color: #fff;
+    }
+  }
+
+  &__social-links {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.6rem;
   }
 }
 
 @media (max-width: 1024px) {
   .contact {
     &__stores { grid-template-columns: repeat(2, 1fr); }
+    &__info-section { grid-template-columns: 1fr; }
   }
 }
 

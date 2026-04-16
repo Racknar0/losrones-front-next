@@ -5,7 +5,7 @@ import Link from 'next/link';
 import usePublicCart from '@store/usePublicCart';
 import './Carrito.scss';
 
-const WHATSAPP_NUMBER = '525555555555'; // Cambiar al número real
+const WHATSAPP_NUMBER = '522294366524';
 const BACK_HOST = (process.env.NEXT_PUBLIC_BACK_HOST || '').replace(/\/+$/, '');
 
 const getMediaSrc = (mediaPath) => {
@@ -34,13 +34,14 @@ const Carrito = () => {
   const handleWhatsApp = () => {
     if (items.length === 0) return;
 
-    let msg = '🛒 *Nuevo Pedido - Losrones*\n\n';
+    let msg = 'Hola, me gustaria ponerme en contacto para confirmar mi pedido.\n\n';
+    msg += '🛒 *Resumen de compra*\n\n';
     items.forEach((item, i) => {
       msg += `${i + 1}. *${item.name}* x${item.qty} — $${(item.price * item.qty).toFixed(2)}\n`;
     });
     msg += '\n📦 Envío: Acordar con el vendedor';
     msg += `\n💰 *Total: $${totalFinal.toFixed(2)}*`;
-    msg += '\n\n¡Gracias por tu compra! 🐾';
+    msg += '\n\nQuedo pendiente de su confirmacion. Gracias.';
 
     const encoded = encodeURIComponent(msg);
     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encoded}`;
@@ -142,7 +143,7 @@ const Carrito = () => {
                 className={`cart-page__checkout ${enviado ? 'cart-page__checkout--sent' : ''}`}
                 onClick={handleWhatsApp}
               >
-                {enviado ? '✓ Pedido Enviado' : '💬 Proceder a pagar'}
+                {enviado ? '✓ Mensaje Enviado' : '💬 Enviar pedido por WhatsApp'}
               </button>
 
               <Link href="/productos" className="cart-page__continue">

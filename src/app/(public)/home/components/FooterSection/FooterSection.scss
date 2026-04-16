@@ -62,8 +62,9 @@ $cream: #FDF8F1;
     margin: 0 auto;
     padding-top: 1.5rem;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
+    text-align: center;
   }
 
   &__copyright {
@@ -71,9 +72,14 @@ $cream: #FDF8F1;
     color: rgba(#fff, 0.4);
   }
 
+  &__social-row {
+    margin-top: 0.35rem;
+  }
+
   &__socials {
     display: flex;
     gap: 0.75rem;
+    align-items: center;
   }
 
   &__social-link {
@@ -84,15 +90,34 @@ $cream: #FDF8F1;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: rgba(#fff, 0.67);
     text-decoration: none;
-    font-size: 0.85rem;
-    transition: all 0.25s ease;
+    color: #fff;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    box-shadow: 0 7px 20px rgba(#000, 0.22);
 
     &:hover {
-      background: $warm-yellow;
-      color: $dark-plum;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(#000, 0.3);
     }
+
+    &--facebook {
+      background: #1877f2;
+    }
+
+    &--instagram {
+      background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285aeb 90%);
+    }
+
+    &--tiktok {
+      background: #101010;
+    }
+  }
+
+  &__social-icon {
+    width: 18px;
+    height: 18px;
+    display: block;
+    fill: currentColor;
   }
 }
 

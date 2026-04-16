@@ -27,6 +27,9 @@ const GOOGLE_MY_MAPS_ID = '1axLxrW6RaneLMevKfLXV1htZvn3QY64';
 const GOOGLE_MY_MAPS_SHARE_URL = 'https://www.google.com/maps/d/u/0/edit?mid=1axLxrW6RaneLMevKfLXV1htZvn3QY64&usp=sharing';
 const MAP_EMBED_ZOOM = 11;
 const MAP_EMBED_SRC = `https://www.google.com/maps/d/embed?mid=${GOOGLE_MY_MAPS_ID}&z=${MAP_EMBED_ZOOM}`;
+const WHATSAPP_NUMBER = '522294366524';
+const WHATSAPP_TEXT = 'Hola, me gustaria ponerme en contacto para recibir informacion.';
+const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_TEXT)}`;
 
 const Contacto = () => {
   return (
@@ -104,9 +107,9 @@ const Contacto = () => {
           <div className="contact__info-card" data-aos="fade-up" data-aos-delay="300" data-aos-duration="850">
             <span className="contact__info-icon">💬</span>
             <h3>WhatsApp</h3>
-            <p>Escríbenos al 2294324870</p>
+            <p>Escríbenos al +52 229 436 6524</p>
             <a
-              href="https://wa.me/522294324870"
+              href={WHATSAPP_LINK}
               target="_blank"
               rel="noopener noreferrer"
               className="contact__info-btn contact__info-btn--whatsapp"
@@ -115,20 +118,35 @@ const Contacto = () => {
             </a>
           </div>
           <div className="contact__info-card" data-aos="fade-up" data-aos-delay="360" data-aos-duration="850">
-            <span className="contact__info-icon">✉️</span>
-            <h3>Email</h3>
-            <p>info@losrones.com</p>
-            <a href="mailto:info@losrones.com" className="contact__info-btn">
-              Enviar Email
-            </a>
-          </div>
-          <div className="contact__info-card" data-aos="fade-up" data-aos-delay="420" data-aos-duration="850">
             <span className="contact__info-icon">📱</span>
             <h3>Redes Sociales</h3>
-            <p>@losrones en todas las plataformas</p>
-            <a href="#" className="contact__info-btn">
-              Seguirnos
-            </a>
+            <p>Síguenos en nuestras cuentas oficiales.</p>
+            <div className="contact__social-links">
+              <a
+                href="https://www.tiktok.com/@losronesver"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="contact__info-btn contact__info-btn--tiktok"
+              >
+                TikTok
+              </a>
+              <a
+                href="https://www.facebook.com/LosRonesStore"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="contact__info-btn contact__info-btn--facebook"
+              >
+                Facebook
+              </a>
+              <a
+                href="https://www.instagram.com/losronesstore"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="contact__info-btn contact__info-btn--instagram"
+              >
+                Instagram
+              </a>
+            </div>
           </div>
         </div>
       </div>

@@ -5,7 +5,6 @@ import PromoSection from './components/PromoSection/PromoSection';
 import WhyUsSection from './components/WhyUsSection/WhyUsSection';
 import TestimonialsSection from './components/TestimonialsSection/TestimonialsSection';
 import CtaBanner from './components/CtaBanner/CtaBanner';
-import FooterSection from './components/FooterSection/FooterSection';
 
 const Home = () => {
   return (
@@ -17,7 +16,6 @@ const Home = () => {
       <WhyUsSection />
       <TestimonialsSection />
       <CtaBanner />
-      <FooterSection />
     </>
   );
 };
