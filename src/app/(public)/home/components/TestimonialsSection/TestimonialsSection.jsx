@@ -8,14 +8,20 @@ const TESTIMONIALS = [
 
 const TestimonialsSection = () => {
   return (
-    <section className="testimonials" id="testimonials">
+    <section className="testimonials" id="testimonials" data-aos="fade-up" data-aos-duration="850">
       <div className="testimonials__container">
-        <p className="testimonials__eyebrow">Testimonios</p>
-        <h2 className="testimonials__title">Familias que nos Eligen</h2>
+        <p className="testimonials__eyebrow" data-aos="fade-up" data-aos-delay="60" data-aos-duration="800">Testimonios</p>
+        <h2 className="testimonials__title" data-aos="fade-up" data-aos-delay="120" data-aos-duration="850">Familias que nos Eligen</h2>
 
         <div className="testimonials__grid">
           {TESTIMONIALS.map((t, idx) => (
-            <div className="testimonials__card" key={idx}>
+            <div
+              className="testimonials__card"
+              key={idx}
+              data-aos="fade-up"
+              data-aos-delay={String(180 + (idx * 90))}
+              data-aos-duration="850"
+            >
               <div className="testimonials__card-stars">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <span className="testimonials__star" key={i}>★</span>
