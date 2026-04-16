@@ -1,6 +1,5 @@
-import Layout from '@admin-shared/Layout/Layout';
-
 export const metadata = {
+  title: 'Acceso',
   robots: {
     index: false,
     follow: false,
@@ -13,6 +12,6 @@ export const metadata = {
   },
 };
 
-export default function DashboardLayout({ children }) {
-  return <Layout>{children}</Layout>;
+export default function LoginLayout({ children }) {
+  return children;
 }
