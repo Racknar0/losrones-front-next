@@ -6,6 +6,19 @@ import usePublicCart from '@store/usePublicCart';
 import './Carrito.scss';
 
 const WHATSAPP_NUMBER = '525555555555'; // Cambiar al número real
+const BACK_HOST = (process.env.NEXT_PUBLIC_BACK_HOST || '').replace(/\/+$/, '');
+
+const getMediaSrc = (mediaPath) => {
+  if (!mediaPath) return '';
+  if (/^https?:\/\//i.test(mediaPath)) return mediaPath;
+
+  const normalizedPath = String(mediaPath)
+    .replace(/\\/g, '/')
+    .replace(/^\/+/, '');
+
+  if (!BACK_HOST) return `/${normalizedPath}`;
+  return `${BACK_HOST}/${normalizedPath}`;
+};
 
 const Carrito = () => {
   const items = usePublicCart((s) => s.items);
@@ -16,8 +29,7 @@ const Carrito = () => {
   const [enviado, setEnviado] = useState(false);
 
   const total = getTotal();
-  const envio = total > 50 ? 0 : 5.99;
-  const totalFinal = total + envio;
+  const totalFinal = total;
 
   const handleWhatsApp = () => {
     if (items.length === 0) return;
@@ -26,7 +38,7 @@ const Carrito = () => {
     items.forEach((item, i) => {
       msg += `${i + 1}. *${item.name}* x${item.qty} — $${(item.price * item.qty).toFixed(2)}\n`;
     });
-    msg += `\n📦 Envío: ${envio === 0 ? 'GRATIS' : `$${envio.toFixed(2)}`}`;
+    msg += '\n📦 Envío: Acordar con el vendedor';
     msg += `\n💰 *Total: $${totalFinal.toFixed(2)}*`;
     msg += '\n\n¡Gracias por tu compra! 🐾';
 
@@ -64,7 +76,17 @@ const Carrito = () => {
 
               {items.map((item) => (
                 <div className="cart-page__item" key={item.id}>
-                  <div className="cart-page__item-img">📷</div>
+                  <div className="cart-page__item-img">
+                    {item.image || (Array.isArray(item.gallery) && item.gallery[0]) ? (
+                      <img
+                        src={getMediaSrc(item.image || item.gallery?.[0])}
+                        alt={item.name || 'Producto'}
+                        loading="lazy"
+                      />
+                    ) : (
+                      <span>📷</span>
+                    )}
+                  </div>
                   <div className="cart-page__item-info">
                     <h3 className="cart-page__item-name">{item.name}</h3>
                     {item.weight && (
@@ -105,15 +127,11 @@ const Carrito = () => {
               </div>
               <div className="cart-page__summary-row">
                 <span>Envío</span>
-                <span className={envio === 0 ? 'cart-page__free' : ''}>
-                  {envio === 0 ? 'GRATIS' : `$${envio.toFixed(2)}`}
-                </span>
+                <span className="cart-page__free">Acordar con el vendedor</span>
               </div>
-              {envio > 0 && (
-                <p className="cart-page__shipping-note">
-                  Envío gratis en compras mayores a $50.00
-                </p>
-              )}
+              <p className="cart-page__shipping-note">
+                El costo y condiciones de envío se confirman directamente con el vendedor.
+              </p>
               <div className="cart-page__summary-divider" />
               <div className="cart-page__summary-row cart-page__summary-row--total">
                 <span>Total</span>
@@ -124,7 +142,7 @@ const Carrito = () => {
                 className={`cart-page__checkout ${enviado ? 'cart-page__checkout--sent' : ''}`}
                 onClick={handleWhatsApp}
               >
-                {enviado ? '✓ Pedido Enviado' : '💬 Proceder al Pago por WhatsApp'}
+                {enviado ? '✓ Pedido Enviado' : '💬 Proceder a pagar'}
               </button>
 
               <Link href="/productos" className="cart-page__continue">

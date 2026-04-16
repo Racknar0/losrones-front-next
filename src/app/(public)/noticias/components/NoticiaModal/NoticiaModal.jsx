@@ -30,7 +30,9 @@ const getMediaSrc = (mediaPath) => {
   if (!mediaPath) return '';
   if (/^https?:\/\//i.test(mediaPath)) return mediaPath;
 
-  const normalizedPath = String(mediaPath).replace(/^\/+/, '');
+  const normalizedPath = String(mediaPath)
+    .replace(/\\/g, '/')
+    .replace(/^\/+/, '');
   if (!BACK_HOST) return `/${normalizedPath}`;
   return `${BACK_HOST}/${normalizedPath}`;
 };
