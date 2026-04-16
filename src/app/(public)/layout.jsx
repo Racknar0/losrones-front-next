@@ -39,8 +39,8 @@ export default function PublicLayout({ children }) {
     AOS.init({
       duration: 800,
       easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
-      once: true,
-      mirror: false,
+      once: false,
+      mirror: true,
       offset: 80,
       anchorPlacement: 'top-bottom',
     });

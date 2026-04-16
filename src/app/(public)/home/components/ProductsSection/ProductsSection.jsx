@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
+import AOS from 'aos';
 import usePublicCart from '@store/usePublicCart';
 import Spinner from '@admin-shared/spinner/Spinner';
 import HttpService from '@services/HttpService';
@@ -209,15 +210,27 @@ const ProductsSection = () => {
     emblaApi.scrollTo(0, true);
   }, [activeFilter, emblaApi, filteredProducts.length]);
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+
+    const frameId = window.requestAnimationFrame(() => {
+      AOS.refreshHard();
+    });
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+    };
+  }, [loadingProducts, filteredProducts.length, activeFilter]);
+
   return (
-    <section className="products" id="products">
+    <section className="products" id="products" data-aos="fade-up" data-aos-duration="850">
       <div className="products__container">
-        <div className="products__header">
+        <div className="products__header" data-aos="fade-up" data-aos-delay="60" data-aos-duration="850">
           <p className="products__eyebrow">Lo Más Vendido</p>
           <h2 className="products__title">Favoritos de Nuestros Clientes</h2>
         </div>
 
-        <div className="products__filters">
+        <div className="products__filters" data-aos="fade-up" data-aos-delay="120" data-aos-duration="850">
           <button
             type="button"
             className={`products__filter-btn ${activeFilter === ALL_FILTER_ID ? 'products__filter-btn--active' : ''}`}
@@ -247,11 +260,11 @@ const ProductsSection = () => {
             Cargando favoritos...
           </div>
         ) : fetchError ? (
-          <div className="products__empty">{fetchError}</div>
+          <div className="products__empty" data-aos="fade-up" data-aos-delay="140">{fetchError}</div>
         ) : filteredProducts.length === 0 ? (
-          <div className="products__empty">Aun no hay productos configurados en el bloque favoritos.</div>
+          <div className="products__empty" data-aos="fade-up" data-aos-delay="140">Aun no hay productos configurados en el bloque favoritos.</div>
         ) : (
-        <div className="products__slider-shell">
+        <div className="products__slider-shell" data-aos="fade-up" data-aos-delay="170" data-aos-duration="850">
           <button
             type="button"
             className="products__nav products__nav--prev"
@@ -264,8 +277,14 @@ const ProductsSection = () => {
 
           <div className="products__viewport" ref={emblaRef}>
             <div className="products__track">
-              {filteredProducts.map((product) => (
-                <div className="products__slide" key={product.id}>
+              {filteredProducts.map((product, index) => (
+                <div
+                  className="products__slide"
+                  key={product.id}
+                  data-aos="fade-up"
+                  data-aos-delay={String(Math.min(120 + (index * 70), 420))}
+                  data-aos-duration="800"
+                >
                   <div
                     className="products__card"
                     role="button"
