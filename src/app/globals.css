@@ -16,10 +16,40 @@ body {
   font-family: var(--font-poppins), sans-serif;
 }
 
+:root {
+  --public-card-shadow: 0 8px 24px rgba(73, 50, 165, 0.08);
+}
+
+img.twemoji {
+  width: 1em;
+  height: 1em;
+  margin: 0 0.06em;
+  vertical-align: -0.1em;
+}
+
 .public-main {
   padding-bottom: 36px;
   max-width: 100%;
   overflow-x: hidden;
+}
+
+.public-main :where(
+  .features__card,
+  .products__card,
+  .prod__card,
+  .testimonials__card,
+  .why-us__card,
+  .news__featured,
+  .news__card,
+  .about__stat,
+  .about__value-card,
+  .about__team-card,
+  .contact__store,
+  .contact__info-card,
+  .cart-page__items,
+  .cart-page__summary
+) {
+  box-shadow: var(--public-card-shadow);
 }
 
 .site-construction-banner {
