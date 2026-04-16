@@ -30,21 +30,27 @@ const MAP_EMBED_SRC = `https://www.google.com/maps/d/embed?mid=${GOOGLE_MY_MAPS_
 
 const Contacto = () => {
   return (
-    <section className="contact">
+    <section className="contact" data-aos="fade-up" data-aos-duration="850">
       {/* ─── Hero ─── */}
-      <div className="contact__hero">
-        <p className="contact__eyebrow">Encuéntranos</p>
-        <h1 className="contact__title">Contáctanos</h1>
-        <p className="contact__subtitle">
+      <div className="contact__hero" data-aos="fade-up" data-aos-delay="60" data-aos-duration="850">
+        <p className="contact__eyebrow" data-aos="fade-up" data-aos-delay="80" data-aos-duration="800">Encuéntranos</p>
+        <h1 className="contact__title" data-aos="fade-up" data-aos-delay="130" data-aos-duration="850">Contáctanos</h1>
+        <p className="contact__subtitle" data-aos="fade-up" data-aos-delay="190" data-aos-duration="850">
           Visítanos en cualquiera de nuestras 3 tiendas o escríbenos por WhatsApp.
         </p>
       </div>
 
-      <div className="contact__container">
+      <div className="contact__container" data-aos="fade-up" data-aos-delay="90" data-aos-duration="850">
         {/* ─── Store Cards ─── */}
-        <div className="contact__stores">
+        <div className="contact__stores" data-aos="fade-up" data-aos-delay="130" data-aos-duration="850">
           {TIENDAS.map((t, i) => (
-            <div className="contact__store" key={i}>
+            <div
+              className="contact__store"
+              key={i}
+              data-aos="fade-up"
+              data-aos-delay={String(170 + (i * 90))}
+              data-aos-duration="850"
+            >
               <div className="contact__store-icon">📍</div>
               <h3 className="contact__store-name">{t.name}</h3>
               <p className="contact__store-address">{t.address}</p>
@@ -67,9 +73,9 @@ const Contacto = () => {
         </div>
 
         {/* ─── Map ─── */}
-        <div className="contact__map-section">
-          <h2 className="contact__section-title">Nuestras Ubicaciones</h2>
-          <div className="contact__map-wrapper">
+        <div className="contact__map-section" data-aos="fade-up" data-aos-delay="220" data-aos-duration="850">
+          <h2 className="contact__section-title" data-aos="fade-up" data-aos-delay="250" data-aos-duration="800">Nuestras Ubicaciones</h2>
+          <div className="contact__map-wrapper" data-aos="zoom-in" data-aos-delay="300" data-aos-duration="900">
             <iframe
               className="contact__map"
               title="Ubicaciones Losrones"
@@ -94,8 +100,8 @@ const Contacto = () => {
         </div>
 
         {/* ─── Contact Info ─── */}
-        <div className="contact__info-section">
-          <div className="contact__info-card">
+        <div className="contact__info-section" data-aos="fade-up" data-aos-delay="260" data-aos-duration="850">
+          <div className="contact__info-card" data-aos="fade-up" data-aos-delay="300" data-aos-duration="850">
             <span className="contact__info-icon">💬</span>
             <h3>WhatsApp</h3>
             <p>Escríbenos al 2294324870</p>
@@ -108,7 +114,7 @@ const Contacto = () => {
               Enviar Mensaje
             </a>
           </div>
-          <div className="contact__info-card">
+          <div className="contact__info-card" data-aos="fade-up" data-aos-delay="360" data-aos-duration="850">
             <span className="contact__info-icon">✉️</span>
             <h3>Email</h3>
             <p>info@losrones.com</p>
@@ -116,7 +122,7 @@ const Contacto = () => {
               Enviar Email
             </a>
           </div>
-          <div className="contact__info-card">
+          <div className="contact__info-card" data-aos="fade-up" data-aos-delay="420" data-aos-duration="850">
             <span className="contact__info-icon">📱</span>
             <h3>Redes Sociales</h3>
             <p>@losrones en todas las plataformas</p>

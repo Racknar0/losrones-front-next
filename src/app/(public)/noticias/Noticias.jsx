@@ -109,38 +109,51 @@ const Noticias = () => {
     };
   }, [httpService]);
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const refresh = () => {
+      if (window.AOS && typeof window.AOS.refreshHard === 'function') {
+        window.AOS.refreshHard();
+      }
+    };
+
+    const timerId = window.setTimeout(refresh, 40);
+    return () => window.clearTimeout(timerId);
+  }, [loadingNews, newsItems.length]);
+
   const featuredNews = newsItems[0] || null;
   const secondaryNews = featuredNews ? newsItems.slice(1) : newsItems;
 
   return (
-    <section className="news">
-      <div className="news__hero">
-        <p className="news__eyebrow">Blog & Noticias</p>
-        <h1 className="news__title">Últimas Noticias</h1>
-        <p className="news__subtitle">
+    <section className="news" data-aos="fade-up" data-aos-duration="850">
+      <div className="news__hero" data-aos="fade-up" data-aos-delay="60" data-aos-duration="850">
+        <p className="news__eyebrow" data-aos="fade-up" data-aos-delay="80" data-aos-duration="800">Blog & Noticias</p>
+        <h1 className="news__title" data-aos="fade-up" data-aos-delay="130" data-aos-duration="850">Últimas Noticias</h1>
+        <p className="news__subtitle" data-aos="fade-up" data-aos-delay="190" data-aos-duration="850">
           Consejos, novedades y todo lo que necesitas saber sobre el mundo pet.
         </p>
       </div>
 
-      <div className="news__container">
+      <div className="news__container" data-aos="fade-up" data-aos-delay="90" data-aos-duration="850">
         {loadingNews ? (
-          <div className="news__loading">
+          <div className="news__loading" data-aos="fade-up" data-aos-delay="120" data-aos-duration="800">
             <Spinner color="#6564d8" />
           </div>
         ) : newsItems.length === 0 ? (
-          <p className="news__empty">No hay noticias activas por ahora.</p>
+          <p className="news__empty" data-aos="fade-up" data-aos-delay="120" data-aos-duration="800">No hay noticias activas por ahora.</p>
         ) : (
           <>
             {featuredNews && (
-              <div className="news__featured" onClick={() => setSelected(featuredNews)}>
-                <div className="news__featured-img">
+              <div className="news__featured" onClick={() => setSelected(featuredNews)} data-aos="fade-up" data-aos-delay="140" data-aos-duration="900">
+                <div className="news__featured-img" data-aos="zoom-in" data-aos-delay="180" data-aos-duration="900">
                   {featuredNews.image ? (
                     <img src={getMediaSrc(featuredNews.image)} alt={featuredNews.title || 'Noticia destacada'} loading="lazy" />
                   ) : (
                     <span>📷 Imagen destacada</span>
                   )}
                 </div>
-                <div className="news__featured-content">
+                <div className="news__featured-content" data-aos="fade-left" data-aos-delay="220" data-aos-duration="900">
                   {featuredNews.tag && (
                     <span
                       className="news__tag"
@@ -162,9 +175,16 @@ const Noticias = () => {
               </div>
             )}
 
-            <div className="news__grid">
-              {secondaryNews.map((n) => (
-                <div className="news__card" key={n.id} onClick={() => setSelected(n)}>
+            <div className="news__grid" data-aos="fade-up" data-aos-delay="180" data-aos-duration="850">
+              {secondaryNews.map((n, idx) => (
+                <div
+                  className="news__card"
+                  key={n.id}
+                  onClick={() => setSelected(n)}
+                  data-aos="fade-up"
+                  data-aos-delay={String(220 + (idx * 70))}
+                  data-aos-duration="850"
+                >
                   <div className="news__card-img">
                     {n.image ? (
                       <img src={getMediaSrc(n.image)} alt={n.title || 'Noticia'} loading="lazy" />
