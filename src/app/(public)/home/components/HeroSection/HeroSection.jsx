@@ -10,7 +10,7 @@ const HeroSection = () => {
       <div className="hero__dots hero__dots--right" />
 
       <div className="hero__container">
-        <div className="hero__content">
+        <div className="hero__content" data-aos="fade-up" data-aos-duration="900">
           <span className="hero__badge">Tu Pet Shop de Confianza</span>
           <h1 className="hero__title">
             Todo para tu cachorro en un solo <span>lugar</span>.
@@ -25,7 +25,12 @@ const HeroSection = () => {
           </Link>
         </div>
 
-        <div className="hero__image-wrapper">
+        <div
+          className="hero__image-wrapper"
+          data-aos="zoom-in"
+          data-aos-delay="120"
+          data-aos-duration="900"
+        >
           <div className="hero__floating-badge hero__floating-badge--top">
             <span className="hero__floating-icon hero__floating-icon--yellow">🐾</span>
             +500 Productos

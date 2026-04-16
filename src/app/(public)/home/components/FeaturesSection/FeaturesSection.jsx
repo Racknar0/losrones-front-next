@@ -8,9 +8,9 @@ import asesor_image from '@assets/asesor_image.webp';
 
 const FeaturesSection = () => {
   return (
-    <section className="features" id="features">
+    <section className="features" id="features" data-aos="fade-up" data-aos-duration="850">
       <div className="features__container">
-        <div className="features__card features__card--pink">
+        <div className="features__card features__card--pink" data-aos="fade-up" data-aos-delay="80" data-aos-duration="850">
           <span className="features__eyebrow">Variedad Única</span>
           <h2 className="features__card-title">Miles de productos en un solo lugar</h2>
           <p className="features__card-text">
@@ -28,7 +28,7 @@ const FeaturesSection = () => {
           </div>
         </div>
 
-        <div className="features__card features__card--yellow">
+        <div className="features__card features__card--yellow" data-aos="fade-up" data-aos-delay="180" data-aos-duration="850">
           <span className="features__eyebrow">Asesoría Experta</span>
           <h2 className="features__card-title">Te ayudamos a elegir lo ideal</h2>
           <p className="features__card-text">
