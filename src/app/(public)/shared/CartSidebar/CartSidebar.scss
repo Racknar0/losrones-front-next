@@ -123,6 +123,18 @@ $deep-accent: #5C1A3A;
     justify-content: center;
     flex-shrink: 0;
     font-size: 1.2rem;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    span {
+      line-height: 1;
+    }
   }
 
   &__item-info {
@@ -133,10 +145,21 @@ $deep-accent: #5C1A3A;
   }
 
   &__item-name {
+    appearance: none;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    text-align: left;
     font-weight: 600;
     font-size: 0.88rem;
     color: $dark-plum;
     line-height: 1.3;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 
   &__item-price {

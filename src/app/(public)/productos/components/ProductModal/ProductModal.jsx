@@ -11,7 +11,9 @@ const getMediaSrc = (mediaPath) => {
   if (!mediaPath) return '';
   if (/^https?:\/\//i.test(mediaPath)) return mediaPath;
 
-  const normalizedPath = String(mediaPath).replace(/^\/+/, '');
+  const normalizedPath = String(mediaPath)
+    .replace(/\\/g, '/')
+    .replace(/^\/+/, '');
   if (!BACK_HOST) return `/${normalizedPath}`;
   return `${BACK_HOST}/${normalizedPath}`;
 };
@@ -24,7 +26,7 @@ const Stars = ({ count = 5, max = 5 }) => (
   </>
 );
 
-const ProductModal = ({ product, onClose }) => {
+const ProductModal = ({ product, onClose, allowAddToCart = true }) => {
   const addItem = usePublicCart((s) => s.addItem);
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
@@ -163,23 +165,27 @@ const ProductModal = ({ product, onClose }) => {
               )}
             </div>
 
-            {/* Quantity Selector */}
-            <div className="pm__qty-section">
-              <span className="pm__qty-label">Cantidad:</span>
-              <div className="pm__qty-controls">
-                <button className="pm__qty-btn" onClick={() => setQty(Math.max(1, qty - 1))}>−</button>
-                <span className="pm__qty-value">{qty}</span>
-                <button className="pm__qty-btn" onClick={() => setQty(qty + 1)}>+</button>
-              </div>
-            </div>
+            {allowAddToCart && (
+              <>
+                {/* Quantity Selector */}
+                <div className="pm__qty-section">
+                  <span className="pm__qty-label">Cantidad:</span>
+                  <div className="pm__qty-controls">
+                    <button className="pm__qty-btn" onClick={() => setQty(Math.max(1, qty - 1))}>−</button>
+                    <span className="pm__qty-value">{qty}</span>
+                    <button className="pm__qty-btn" onClick={() => setQty(qty + 1)}>+</button>
+                  </div>
+                </div>
 
-            {/* Add to Cart */}
-            <button
-              className={`pm__add-btn ${added ? 'pm__add-btn--added' : ''}`}
-              onClick={handleAdd}
-            >
-              {added ? '✓ Añadido al carrito' : '🛒 Agregar al Carrito'}
-            </button>
+                {/* Add to Cart */}
+                <button
+                  className={`pm__add-btn ${added ? 'pm__add-btn--added' : ''}`}
+                  onClick={handleAdd}
+                >
+                  {added ? '✓ Añadido al carrito' : '🛒 Agregar al Carrito'}
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>

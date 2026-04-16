@@ -1,16 +1,39 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import usePublicCart from '@store/usePublicCart';
+import ProductModal from '../../productos/components/ProductModal/ProductModal';
 import './CartSidebar.scss';
 
+const BACK_HOST = (process.env.NEXT_PUBLIC_BACK_HOST || '').replace(/\/+$/, '');
+
+const getMediaSrc = (mediaPath) => {
+  if (!mediaPath) return '';
+  if (/^https?:\/\//i.test(mediaPath)) return mediaPath;
+
+  const normalizedPath = String(mediaPath)
+    .replace(/\\/g, '/')
+    .replace(/^\/+/, '');
+
+  if (!BACK_HOST) return `/${normalizedPath}`;
+  return `${BACK_HOST}/${normalizedPath}`;
+};
+
 const CartSidebar = () => {
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const items = usePublicCart((s) => s.items);
   const sidebarOpen = usePublicCart((s) => s.sidebarOpen);
   const closeSidebar = usePublicCart((s) => s.closeSidebar);
   const updateQty = usePublicCart((s) => s.updateQty);
   const removeItem = usePublicCart((s) => s.removeItem);
   const getTotal = usePublicCart((s) => s.getTotal);
+
+  const getItemImage = (item) => {
+    if (item?.image) return item.image;
+    if (Array.isArray(item?.gallery) && item.gallery.length > 0) return item.gallery[0];
+    return null;
+  };
 
   return (
     <>
@@ -40,9 +63,26 @@ const CartSidebar = () => {
           ) : (
             items.map((item) => (
               <div className="cart-sidebar__item" key={item.id}>
-                <div className="cart-sidebar__item-img">📷</div>
+                <div className="cart-sidebar__item-img">
+                  {getItemImage(item) ? (
+                    <img
+                      src={getMediaSrc(getItemImage(item))}
+                      alt={item.name || 'Producto'}
+                      loading="lazy"
+                    />
+                  ) : (
+                    <span>📷</span>
+                  )}
+                </div>
                 <div className="cart-sidebar__item-info">
-                  <div className="cart-sidebar__item-name">{item.name}</div>
+                  <button
+                    type="button"
+                    className="cart-sidebar__item-name"
+                    onClick={() => setSelectedProduct(item)}
+                    title="Ver detalle"
+                  >
+                    {item.name}
+                  </button>
                   <div className="cart-sidebar__item-price">${item.price.toFixed(2)}</div>
                   <div className="cart-sidebar__item-controls">
                     <button
@@ -83,6 +123,14 @@ const CartSidebar = () => {
           </div>
         )}
       </div>
+
+      {selectedProduct && (
+        <ProductModal
+          product={selectedProduct}
+          onClose={() => setSelectedProduct(null)}
+          allowAddToCart={false}
+        />
+      )}
     </>
   );
 };
