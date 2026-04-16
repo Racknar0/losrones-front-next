@@ -4,38 +4,29 @@ import './Contacto.scss';
 
 const TIENDAS = [
   {
-    name: 'CDMX — Condesa',
-    address: 'Av. Tamaulipas 150, Col. Condesa, CP 06140, Ciudad de México',
-    phone: '+52 55 1234 5678',
-    hours: 'Lun-Sáb: 9:00 - 20:00 | Dom: 10:00 - 17:00',
-    lat: 19.4127,
-    lng: -99.1736,
+    name: 'Sucursal Ocampo',
+    address: 'Melchor Ocampo #219 entre Independencia y 5 de Mayo, Veracruz, Veracruz',
+    phone: '2294324870',
+    hours: '11 am - 8 pm',
   },
   {
-    name: 'CDMX — Polanco',
-    address: 'Av. Presidente Masaryk 320, Col. Polanco, CP 11560, Ciudad de México',
-    phone: '+52 55 2345 6789',
-    hours: 'Lun-Sáb: 10:00 - 21:00 | Dom: 11:00 - 18:00',
-    lat: 19.4330,
-    lng: -99.1910,
+    name: 'Sucursal Américas',
+    address: 'Plaza Américas, Local 22 ñ, Boca del Río, Veracruz',
+    phone: '2294366524',
+    hours: '11 am - 8 pm',
   },
   {
-    name: 'Guadalajara — Providencia',
-    address: 'Av. Providencia 2540, Col. Providencia, CP 44630, Guadalajara, Jalisco',
-    phone: '+52 33 3456 7890',
-    hours: 'Lun-Sáb: 9:00 - 20:00 | Dom: 10:00 - 16:00',
-    lat: 20.6870,
-    lng: -103.3940,
-  },
-  {
-    name: 'Monterrey — San Pedro',
-    address: 'Calzada del Valle 400, Col. Del Valle, CP 66220, San Pedro Garza García, N.L.',
-    phone: '+52 81 4567 8901',
-    hours: 'Lun-Sáb: 9:00 - 20:00 | Dom: 10:00 - 17:00',
-    lat: 25.6510,
-    lng: -100.3560,
+    name: 'Sucursal Mocambo',
+    address: 'Plaza Mocambo, Local B23, Boca del Río, Veracruz',
+    phone: '2299501910',
+    hours: '11 am - 8 pm',
   },
 ];
+
+const GOOGLE_MY_MAPS_ID = '1axLxrW6RaneLMevKfLXV1htZvn3QY64';
+const GOOGLE_MY_MAPS_SHARE_URL = 'https://www.google.com/maps/d/u/0/edit?mid=1axLxrW6RaneLMevKfLXV1htZvn3QY64&usp=sharing';
+const MAP_EMBED_ZOOM = 11;
+const MAP_EMBED_SRC = `https://www.google.com/maps/d/embed?mid=${GOOGLE_MY_MAPS_ID}&z=${MAP_EMBED_ZOOM}`;
 
 const Contacto = () => {
   return (
@@ -45,7 +36,7 @@ const Contacto = () => {
         <p className="contact__eyebrow">Encuéntranos</p>
         <h1 className="contact__title">Contáctanos</h1>
         <p className="contact__subtitle">
-          Visítanos en cualquiera de nuestras 4 tiendas o escríbenos por WhatsApp.
+          Visítanos en cualquiera de nuestras 3 tiendas o escríbenos por WhatsApp.
         </p>
       </div>
 
@@ -64,7 +55,7 @@ const Contacto = () => {
                 <span>🕒 {t.hours}</span>
               </div>
               <a
-                href={`https://www.google.com/maps?q=${t.lat},${t.lng}`}
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(t.address)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="contact__store-link"
@@ -82,7 +73,7 @@ const Contacto = () => {
             <iframe
               className="contact__map"
               title="Ubicaciones Losrones"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7667725.697421684!2d-104.0!3d23.0!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x84043a3b88685353%3A0xed64b4be6b099811!2sMexico!5e0!3m2!1ses!2smx!4v1234567890"
+              src={MAP_EMBED_SRC}
               width="100%"
               height="500"
               style={{ border: 0, borderRadius: '20px' }}
@@ -90,24 +81,15 @@ const Contacto = () => {
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
             />
-            {/* Fallback static pins overlay */}
-            <div className="contact__map-pins">
-              {TIENDAS.map((t, i) => (
-                <div
-                  key={i}
-                  className="contact__map-pin"
-                  title={t.name}
-                  style={{
-                    // Approximate pixel positions for Mexico map
-                    left: `${((t.lng + 105) / 10) * 100}%`,
-                    top: `${((28 - t.lat) / 12) * 100}%`,
-                  }}
-                >
-                  <span className="contact__pin-dot" />
-                  <span className="contact__pin-label">{t.name.split('—')[0].trim()}</span>
-                </div>
-              ))}
-            </div>
+            <a
+              href={GOOGLE_MY_MAPS_SHARE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="contact__store-link"
+              style={{ margin: '0.85rem 0 0.2rem 0.65rem' }}
+            >
+              Abrir mapa completo ↗
+            </a>
           </div>
         </div>
 
@@ -116,9 +98,9 @@ const Contacto = () => {
           <div className="contact__info-card">
             <span className="contact__info-icon">💬</span>
             <h3>WhatsApp</h3>
-            <p>Escríbenos al +52 55 1234 5678</p>
+            <p>Escríbenos al 2294324870</p>
             <a
-              href="https://wa.me/525512345678"
+              href="https://wa.me/522294324870"
               target="_blank"
               rel="noopener noreferrer"
               className="contact__info-btn contact__info-btn--whatsapp"

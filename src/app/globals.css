@@ -28,7 +28,7 @@ img.twemoji {
 }
 
 .public-main {
-  padding-bottom: 36px;
+  padding-bottom: 0;
   max-width: 100%;
   overflow-x: hidden;
 }
@@ -52,23 +52,40 @@ img.twemoji {
   box-shadow: var(--public-card-shadow);
 }
 
-.site-construction-banner {
+.whatsapp-fab {
   position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 9999;
-  min-height: 36px;
-  padding: 8px 12px;
-  background: #c41212;
+  right: 18px;
+  bottom: 18px;
+  z-index: 1400;
+  width: 56px;
+  height: 56px;
+  background: #25d366;
   color: #ffffff;
-  text-align: center;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  display: flex;
+  text-decoration: none;
+  border-radius: 50%;
+  box-shadow: 0 10px 24px rgba(37, 211, 102, 0.35);
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-top: 1px solid #8c0e0e;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.whatsapp-fab:hover {
+  transform: translateY(-2px);
+  background: #1fb95a;
+  box-shadow: 0 14px 28px rgba(37, 211, 102, 0.42);
+}
+
+.whatsapp-fab__icon {
+  width: 30px;
+  height: 30px;
+}
+
+@media (max-width: 768px) {
+  .whatsapp-fab {
+    right: 12px;
+    bottom: 12px;
+    width: 52px;
+    height: 52px;
+  }
 }
