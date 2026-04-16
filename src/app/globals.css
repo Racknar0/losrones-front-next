@@ -30,7 +30,6 @@ img.twemoji {
 .public-main {
   padding-bottom: 0;
   max-width: 100%;
-  overflow-x: hidden;
 }
 
 .public-main :where(
