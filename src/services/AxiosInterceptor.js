@@ -2,6 +2,13 @@ import axios from 'axios';
 import { getState } from '../store/useStore';
 import { errorAlert, timerAlert, timerAlertWhitoutButton } from '../helpers/alerts';
 const BACK_HOST = process.env.NEXT_PUBLIC_BACK_HOST;
+
+const clearAuthCookie = () => {
+  if (typeof document === 'undefined') return;
+  const secure = typeof window !== 'undefined' && window.location.protocol === 'https:' ? '; Secure' : '';
+  document.cookie = `auth_token=; Path=/; Max-Age=0; SameSite=Lax${secure}`;
+};
+
 // Crear una instancia de Axios
 const axiosInstance = axios.create({
   baseURL: BACK_HOST,
@@ -45,7 +52,7 @@ axiosInstance.interceptors.response.use(
         // Si el error es 401 Unauthorized, muestra la alerta y luego cierra sesión
         localStorage.removeItem('token'); // Elimina el token
         localStorage.removeItem('selectedStore'); // Elimina el usuario
-        document.cookie = 'auth_token=; Path=/; Max-Age=0; SameSite=Lax';
+        clearAuthCookie();
         window.location.href = '/login'; // Redirige al login
       }
 

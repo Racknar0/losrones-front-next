@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
-import { decodeToken } from '../helpers/jwtHelper'; // Ajusta la ruta según tu estructura
+import { decodeToken, isTokenExpired } from '../helpers/jwtHelper'; // Ajusta la ruta según tu estructura
 
 const isBrowser = typeof window !== 'undefined';
 
@@ -64,8 +64,20 @@ const removeFromStorage = (key) => {
   }
 };
 
+// Recupera el token y valida que siga vigente.
+const storedToken = getFromStorage('token');
+const cookieToken = getFromCookie(AUTH_COOKIE_NAME);
+const rawInitialToken = storedToken || cookieToken || null;
+const initialTokenIsValid = rawInitialToken && !isTokenExpired(rawInitialToken);
+
+if (rawInitialToken && !initialTokenIsValid) {
+  removeFromStorage('token');
+  removeFromStorage('selectedStore');
+  clearAuthCookie();
+}
+
 // Recupera el token y decodifica la data inicial
-const initialToken = getFromStorage('token') || getFromCookie(AUTH_COOKIE_NAME) || null;
+const initialToken = initialTokenIsValid ? rawInitialToken : null;
 const initialJwtData = initialToken ? decodeToken(initialToken) : null;
 
 // Inicializa selectedStore desde localStorage o desde la tienda del token actual

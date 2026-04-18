@@ -8,3 +8,14 @@ export const decodeToken = (token) => {
     return null;
   }
 };
+
+export const isTokenExpired = (token) => {
+  const payload = decodeToken(token);
+
+  // Si no se puede leer o no trae exp, lo tratamos como invalido.
+  if (!payload || typeof payload.exp !== 'number') {
+    return true;
+  }
+
+  return payload.exp * 1000 <= Date.now();
+};
