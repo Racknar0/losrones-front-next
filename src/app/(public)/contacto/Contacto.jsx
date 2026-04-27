@@ -6,18 +6,21 @@ const TIENDAS = [
   {
     name: 'Sucursal Ocampo',
     address: 'Melchor Ocampo #219 entre Independencia y 5 de Mayo, Veracruz, Veracruz',
+    mapUrl: 'https://www.google.com/maps/place/Los+Rones+Ocampo/@19.1959481,-96.1365076,17z/data=!3m1!4b1!4m6!3m5!1s0x85c3470534ab0c7b:0xb6e62cd84ca19dd9!8m2!3d19.1959481!4d-96.1365076!16s%2Fg%2F11h_46zqgn!18m1!1e1?entry=ttu&g_ep=EgoyMDI2MDQyMi4wIKXMDSoASAFQAw%3D%3D',
     phone: '2294324870',
     hours: '11 am - 8 pm',
   },
   {
     name: 'Sucursal Américas',
     address: 'Plaza Américas, Local 22 ñ, Boca del Río, Veracruz',
+    mapUrl: 'https://www.google.com/maps/place/Los+Rones+Americas/@19.1398401,-96.105565,17z/data=!3m1!4b1!4m6!3m5!1s0x85c34194093b0161:0x98fb1523eab9e08e!8m2!3d19.1398401!4d-96.105565!16s%2Fg%2F11swph9hyq!18m1!1e1?entry=ttu&g_ep=EgoyMDI2MDQyMi4wIKXMDSoASAFQAw%3D%3D',
     phone: '2294366524',
     hours: '11 am - 8 pm',
   },
   {
     name: 'Sucursal Mocambo',
     address: 'Plaza Mocambo, Local B23, Boca del Río, Veracruz',
+    mapUrl: 'https://www.google.com/maps/place/Los+Rones+Mocambo/@19.1590526,-96.1109153,17z/data=!3m1!4b1!4m6!3m5!1s0x85c341ffc3e57043:0x4599b989ad52ff46!8m2!3d19.1590526!4d-96.1109153!16s%2Fg%2F11fn4l_gfb!18m1!1e1?entry=ttu&g_ep=EgoyMDI2MDQyMi4wIKXMDSoASAFQAw%3D%3D',
     phone: '2299501910',
     hours: '11 am - 8 pm',
   },
@@ -64,7 +67,7 @@ const Contacto = () => {
                 <span>🕒 {t.hours}</span>
               </div>
               <a
-                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(t.address)}`}
+                href={t.mapUrl ?? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(t.address)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="contact__store-link"

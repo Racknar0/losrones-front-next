@@ -36,9 +36,9 @@ const FooterSection = () => {
         <div>
           <h3 className="footer__col-title">Contacto</h3>
           <ul className="footer__links">
-            <li><a href="mailto:info@losrones.com">info@losrones.com</a></li>
+            <li><a href="mailto:info@losrones.com">losronesstore@outlook.com</a></li>
             <li><a href="tel:+522294366524">+52 229 436 6524</a></li>
-            <li><a href="#">Ciudad de México, MX</a></li>
+            <li><a href="#">Boca del Río, Veracruz, MX</a></li>
             <li className="footer__social-row" aria-label="Redes sociales Losrones">
               <div className="footer__socials">
                 <a

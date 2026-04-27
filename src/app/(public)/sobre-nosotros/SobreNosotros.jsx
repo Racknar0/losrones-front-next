@@ -1,18 +1,60 @@
 import './SobreNosotros.scss';
 
 const VALORES = [
-  { icon: '🌿', title: 'Naturalidad', text: 'Cada ingrediente es seleccionado por su calidad y origen natural. Sin aditivos artificiales.' },
-  { icon: '❤️', title: 'Pasión', text: 'Amamos lo que hacemos. Cada producto refleja nuestro compromiso con el bienestar animal.' },
-  { icon: '🔬', title: 'Ciencia', text: 'Nuestras fórmulas son desarrolladas con la guía de veterinarios y nutricionistas expertos.' },
-  { icon: '🤝', title: 'Compromiso', text: 'Donamos trimestralmente a refugios de animales. Creemos en devolver a la comunidad.' },
+  {
+    icon: '❤️',
+    title: 'Amor por los cachorros y michis',
+    text: 'Todo lo que hacemos es pensando en su bienestar, comodidad y felicidad.',
+  },
+  {
+    icon: '🤝',
+    title: 'Cercanía con nuestros clientes',
+    text: 'Nos gusta conocer a cada cliente y a sus peludos. Aquí no eres uno más, eres parte de la familia Rones.',
+  },
+  {
+    icon: '⭐',
+    title: 'Calidad que sí se nota',
+    text: 'Elegimos productos que realmente funcionan y que nosotros mismos usaríamos con nuestros cachorros.',
+  },
+  {
+    icon: '🐶',
+    title: 'Experiencia Rones',
+    text: 'Queremos que cada visita sea especial, que tu cachorro o michi salga feliz... y tú también.',
+  },
 ];
 
-const TEAM = [
-  { name: 'Dr. Carlos Mendoza', role: 'Director de Nutrición', initials: 'CM' },
-  { name: 'Ana García', role: 'Fundadora & CEO', initials: 'AG' },
-  { name: 'Roberto Sánchez', role: 'Jefe de Producción', initials: 'RS' },
-  { name: 'Dra. María Torres', role: 'Veterinaria en Jefe', initials: 'MT' },
+const CONTACTOS = [
+  {
+    name: 'Facturación y buzón de quejas',
+    phone: '229 447 3721',
+    detail: 'Atención administrativa y seguimiento de reportes.',
+    iconType: 'billing',
+  },
+  {
+    name: 'Compras',
+    phone: '229 675 9490',
+    detail: 'Pedidos, surtido y atención para nuevos productos.',
+    iconType: 'purchases',
+  },
 ];
+
+const ContactIcon = ({ type }) => {
+  if (type === 'billing') {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" role="img">
+        <path d="M6 3.5h12v17l-2-1.2-2 1.2-2-1.2-2 1.2-2-1.2-2 1.2v-17z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M9 8h6M9 11.5h6M9 15h4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" role="img">
+      <rect x="3" y="7" width="18" height="12" rx="2" fill="none" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M8 7V5.8A1.8 1.8 0 019.8 4h4.4A1.8 1.8 0 0116 5.8V7M3 11h18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+};
 
 const SobreNosotros = () => {
   return (
@@ -22,30 +64,36 @@ const SobreNosotros = () => {
         <p className="about__eyebrow" data-aos="fade-up" data-aos-delay="80" data-aos-duration="800">Nuestra Historia</p>
         <h1 className="about__title" data-aos="fade-up" data-aos-delay="130" data-aos-duration="850">Sobre Nosotros</h1>
         <p className="about__subtitle" data-aos="fade-up" data-aos-delay="190" data-aos-duration="850">
-          Desde 2018 transformando la nutrición animal en México con productos naturales y de calidad premium.
+          Lo que empezó con Ron y una camada de ocho cachorros, hoy es una historia de esfuerzo, familia y amor por cada michi y cachorro en Veracruz.
         </p>
       </div>
 
       <div className="about__container" data-aos="fade-up" data-aos-delay="90" data-aos-duration="850">
         {/* ─── Story ─── */}
         <div className="about__story" data-aos="fade-up" data-aos-delay="130" data-aos-duration="900">
-          <div className="about__story-img" data-aos="zoom-in" data-aos-delay="170" data-aos-duration="900">📷 Imagen de equipo</div>
           <div className="about__story-content" data-aos="fade-left" data-aos-delay="210" data-aos-duration="900">
-            <h2 className="about__story-title">Cómo empezó todo</h2>
+            <h2 className="about__story-title">🐾 Nuestra historia</h2>
             <p>
-              Losrones nació en 2018 de la frustración de nuestra fundadora, Ana García, al no encontrar
-              alimentos verdaderamente naturales para su golden retriever, Max. Tras meses de investigación
-              y el apoyo de veterinarios especialistas, desarrolló las primeras fórmulas de lo que hoy es
-              Losrones.
+              Todo empezó con Ron. 🐶
             </p>
             <p>
-              Lo que comenzó como un pequeño emprendimiento en la cocina de casa, hoy es una empresa con
-              4 tiendas en México, un equipo de más de 50 personas y la confianza de más de 5,000 familias
-              que eligen nuestros productos cada mes.
+              Él fue el mayor de una familia de ocho cachorros, y cada vez que los llevábamos a la estética,
+              en lugar de anotar sus nombres uno por uno, simplemente los llamaban “los Rones”.
+              Sin pensarlo mucho, ese nombre se quedó… y con el tiempo se volvió algo especial para nosotros.
             </p>
             <p>
-              Nuestro compromiso sigue siendo el mismo: ofrecer alimentos que realmente nutran, hechos con
-              ingredientes que nosotros mismos comeríamos. Porque tu cachorro merece lo mejor.
+              Años después, en un momento complicado antes de nuestra boda, decidimos empezar desde cero.
+              Con esfuerzo y muchas ganas, comenzamos vendiendo artículos para perros en distintos puntos de la ciudad.
+              Poco a poco, lo que empezó como una forma de salir adelante se fue convirtiendo en algo mucho más grande.
+            </p>
+            <p>
+              El 2 de enero de 2018 abrimos nuestra primera tienda en Plaza Mocambo, marcando el inicio de lo que hoy es Rones.
+              Con el tiempo crecimos, aprendimos y superamos retos importantes, siempre con la misma idea:
+              ofrecer lo mejor para quienes forman parte de la familia.
+            </p>
+            <p>
+              Hoy, seguimos aquí, con nuestras sucursales en Veracruz, dedicados a consentir a cada cachorro y michi que llega,
+              porque entendemos que no son solo mascotas… son parte de hogar. 🐾
             </p>
           </div>
         </div>
@@ -72,7 +120,7 @@ const SobreNosotros = () => {
 
         {/* ─── Values ─── */}
         <div className="about__values-section" data-aos="fade-up" data-aos-delay="220" data-aos-duration="850">
-          <h2 className="about__section-title" data-aos="fade-up" data-aos-delay="250" data-aos-duration="800">Nuestros Valores</h2>
+          <h2 className="about__section-title" data-aos="fade-up" data-aos-delay="250" data-aos-duration="800">🐾 Nuestros valores</h2>
           <div className="about__values">
             {VALORES.map((v, i) => (
               <div
@@ -90,11 +138,11 @@ const SobreNosotros = () => {
           </div>
         </div>
 
-        {/* ─── Team ─── */}
+        {/* ─── Contact Channels ─── */}
         <div className="about__team-section" data-aos="fade-up" data-aos-delay="260" data-aos-duration="850">
-          <h2 className="about__section-title" data-aos="fade-up" data-aos-delay="290" data-aos-duration="800">Nuestro Equipo</h2>
+          <h2 className="about__section-title" data-aos="fade-up" data-aos-delay="290" data-aos-duration="800">Canales de atención</h2>
           <div className="about__team">
-            {TEAM.map((t, i) => (
+            {CONTACTOS.map((t, i) => (
               <div
                 className="about__team-card"
                 key={i}
@@ -102,9 +150,12 @@ const SobreNosotros = () => {
                 data-aos-delay={String(320 + (i * 80))}
                 data-aos-duration="850"
               >
-                <div className="about__team-avatar">{t.initials}</div>
+                <div className="about__team-avatar">
+                  <ContactIcon type={t.iconType} />
+                </div>
                 <h3 className="about__team-name">{t.name}</h3>
-                <p className="about__team-role">{t.role}</p>
+                <p className="about__team-role">{t.phone}</p>
+                <p className="about__team-detail">{t.detail}</p>
               </div>
             ))}
           </div>
