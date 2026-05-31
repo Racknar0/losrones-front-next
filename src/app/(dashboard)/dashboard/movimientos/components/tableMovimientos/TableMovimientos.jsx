@@ -97,8 +97,6 @@ const TableMovimientos = () => {
 
   const handleSelect = ranges => {
     setRange(ranges.selection);
-    // ocultar calendario al elegir
-    setShowCalendar(false);
   };
 
   // ----------------------------------------------------

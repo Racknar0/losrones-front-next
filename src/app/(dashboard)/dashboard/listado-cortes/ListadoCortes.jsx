@@ -96,7 +96,6 @@ const ListadoCortes = () => {
 
   const handleSelect = ranges => {
     setRange(ranges.selection);
-    setShowCalendar(false);
     fetchFilteredCortes(ranges.selection);
   };
 

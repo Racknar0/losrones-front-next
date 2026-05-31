@@ -105,7 +105,6 @@ const TableRecibos = () => {
     const handleSelect = (ranges) => {
         const { startDate, endDate } = ranges.selection;
         setRange(ranges.selection);
-        setShowCalendar(false);
         fetchRecibos(startDate, endDate);
     };
 
