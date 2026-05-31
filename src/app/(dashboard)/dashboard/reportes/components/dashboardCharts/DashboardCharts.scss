@@ -1,0 +1,399 @@
+.dashboard-charts-wrapper {
+  margin: 24px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.dashboard-charts-card {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f3f4f6;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08);
+  }
+
+  .charts-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+
+    &.has-tabs {
+      align-items: center;
+    }
+
+    .charts-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111827;
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .charts-subtitle {
+      font-size: 13px;
+      color: #6b7280;
+      margin: 4px 0 0 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    // Selector de pestañas (Tabs Switcher)
+    .charts-tab-switcher {
+      display: flex;
+      background: #f3f4f6;
+      padding: 4px;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      gap: 2px;
+
+      .tab-btn {
+        background: transparent;
+        border: none;
+        outline: none;
+        padding: 6px 14px;
+        font-size: 12.5px;
+        font-weight: 700;
+        color: #4b5563;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-family: 'Inter', sans-serif;
+
+        &:hover {
+          color: #111827;
+          background: rgba(255, 255, 255, 0.4);
+        }
+
+        &.active {
+          background: #ffffff;
+          color: #5a3ec8; // Color primario de tu marca
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+      }
+    }
+
+    .charts-quick-summary {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      background: #f9fafb;
+      padding: 8px 16px;
+      border-radius: 12px;
+      border: 1px solid #f3f4f6;
+
+      .summary-item {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        position: relative;
+        padding-right: 16px;
+
+        &:not(:last-child)::after {
+          content: "";
+          position: absolute;
+          right: 0;
+          top: 15%;
+          height: 70%;
+          width: 1px;
+          background-color: #e5e7eb;
+        }
+
+        &:last-child {
+          padding-right: 0;
+        }
+
+        .label {
+          font-size: 10px;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          color: #9ca3af;
+          font-weight: 600;
+        }
+
+        .value {
+          font-size: 14px;
+          font-weight: 700;
+          color: #374151;
+        }
+
+        &.rev .value {
+          color: #059669;
+        }
+
+        &.cst .value {
+          color: #dc2626;
+        }
+
+        &.prf .value {
+          color: #2563eb;
+        }
+
+        .margin-badge {
+          background: rgba(16, 185, 129, 0.1);
+          color: #059669 !important;
+          padding: 2px 6px;
+          border-radius: 6px;
+          font-size: 12px;
+        }
+      }
+    }
+  }
+
+  // Gráfica Principal (Ventas en el Tiempo)
+  &.primary-card {
+    .chart-container.main-chart {
+      position: relative;
+      height: 350px;
+      width: 100%;
+      min-height: 350px;
+    }
+  }
+
+  // Gráficas Secundarias
+  &.secondary-card {
+    height: 540px; // Altura idéntica garantizada para ambas gráficas
+    display: flex;
+    flex-direction: column;
+
+    .chart-container.secondary-chart {
+      position: relative;
+      flex-grow: 1;
+      width: 100%;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+
+      &.scrollable-content-wrapper {
+        align-items: stretch;
+        justify-content: stretch;
+      }
+    }
+  }
+
+  .no-data-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #9ca3af;
+    text-align: center;
+    gap: 8px;
+    padding: 40px 0;
+    width: 100%;
+
+    p {
+      font-size: 15px;
+      font-weight: 600;
+      color: #4b5563;
+      margin: 0;
+    }
+
+    span {
+      font-size: 12px;
+      color: #9ca3af;
+    }
+  }
+}
+
+// Contenedores de Scroll de las gráficas secundarias
+.chart-scroll-viewport {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  padding-right: 4px;
+
+  // Estilo premium para el scrollbar
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: #f9fafb;
+    border-radius: 10px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 10px;
+    &:hover {
+      background: #9ca3af;
+    }
+  }
+}
+
+// Estructura de Lista para productos "Sin Ventas"
+.unsold-products-list-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  font-family: 'Inter', sans-serif;
+
+  // Columnas alineadas
+  .col-prod { flex: 2; text-align: left; }
+  .col-code { flex: 1; text-align: left; color: #6b7280; font-family: monospace; font-size: 13px; }
+  .col-stock { flex: 1; text-align: right; }
+
+  .unsold-list-header {
+    display: flex;
+    width: 100%;
+    padding: 10px 16px;
+    background: #f9fafb;
+    border-radius: 8px;
+    border: 1px solid #f3f4f6;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #9ca3af;
+    margin-bottom: 8px;
+  }
+
+  .unsold-list-scrollview {
+    flex-grow: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    padding-right: 4px;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+    &::-webkit-scrollbar-track {
+      background: #f9fafb;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: #d1d5db;
+      border-radius: 10px;
+    }
+
+    .unsold-item-row {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      padding: 10px 16px;
+      border-bottom: 1px solid #f3f4f6;
+      font-size: 13px;
+      transition: background 0.15s ease;
+
+      &:hover {
+        background: #f9fafb;
+      }
+
+      .prod-name {
+        font-weight: 600;
+        color: #111827;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding-right: 8px;
+      }
+
+      .stock-pill {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 700;
+
+        // Si tiene stock congelado sin vender ➔ Alerta (Rojo)
+        &.has-stock {
+          background: rgba(239, 68, 68, 0.1);
+          color: #dc2626;
+        }
+
+        // Si no tiene stock ➔ Muted (Gris)
+        &.no-stock {
+          background: #f3f4f6;
+          color: #9ca3af;
+        }
+      }
+    }
+  }
+}
+
+// Fila de dos columnas para gráficas secundarias
+.dashboard-secondary-row {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  gap: 24px;
+  width: 100%;
+  min-width: 0;
+
+  > * {
+    min-width: 0;
+  }
+
+  @media (max-width: 992px) {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+// Adaptabilidad móvil y de tablets
+@media (max-width: 768px) {
+  .dashboard-charts-card {
+    padding: 16px;
+    gap: 16px;
+
+    .charts-header {
+      flex-direction: column;
+      align-items: flex-start;
+
+      &.has-tabs {
+        align-items: stretch;
+        gap: 12px;
+
+        .charts-tab-switcher {
+          width: 100%;
+          justify-content: space-between;
+          .tab-btn {
+            flex: 1;
+            text-align: center;
+            padding: 6px 4px;
+            font-size: 11px;
+          }
+        }
+      }
+
+      .charts-quick-summary {
+        width: 100%;
+        justify-content: space-between;
+        gap: 12px;
+
+        .summary-item {
+          padding-right: 8px;
+          flex: 1;
+          align-items: center;
+          text-align: center;
+
+          &:not(:last-child)::after {
+            display: none;
+          }
+        }
+      }
+    }
+
+    &.primary-card {
+      .chart-container.main-chart {
+        height: 280px;
+        min-height: 280px;
+      }
+    }
+
+    &.secondary-card {
+      height: 480px;
+    }
+  }
+}

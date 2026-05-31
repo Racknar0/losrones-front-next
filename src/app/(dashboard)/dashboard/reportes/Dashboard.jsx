@@ -5,6 +5,7 @@ import { DateRange } from 'react-date-range';
 import TableDashboard from './components/tableDashboard/TableDashboard'; 
 import DashboardSquares from './components/dashboardSquares/DashboardSquares';
 import ExpirationsByStore from './components/dashboardSquares/ExpirationsByStore';
+import DashboardCharts from './components/dashboardCharts/DashboardCharts';
 import HttpService from '@services/HttpService';
 import './Dashboard.scss';
 import useStore from '@store/useStore';
@@ -89,8 +90,26 @@ const Dashboard = () => {
     }
   };
 
+  const [allProducts, setAllProducts] = useState([]);
+
+  const fetchAllProducts = async () => {
+    if (!selectedStore) {
+      setAllProducts([]);
+      return;
+    }
+    try {
+      const resp = await httpService.getData(`/product?storeId=${selectedStore}`);
+      if (resp.status === 200) {
+        setAllProducts(resp.data || []);
+      }
+    } catch (err) {
+      console.error('Error fetchAllProducts:', err);
+    }
+  };
+
   useEffect(() => {
     fetchSales(range.startDate, range.endDate);
+    fetchAllProducts();
   }, [selectedStore]);
 
   const handleSelectRange = (ranges) => {
@@ -263,6 +282,8 @@ const Dashboard = () => {
   return (
     <div>
       <DashboardSquares dataSales={dataSales}/>
+
+      <DashboardCharts dataSales={dataSales} allProducts={allProducts}/>
 
       {/* Cajas de productos próximos a vencer por tienda */}
       {loadingExpirations ? (
