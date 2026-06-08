@@ -12,6 +12,7 @@ import './page.scss';
 
 export default function Page() {
   const login = useStore((state) => state.login);
+  const logout = useStore((state) => state.logout);
   const token = useStore((state) => state.token);
   const httpService = new HttpService();
   const router = useRouter();
@@ -23,6 +24,14 @@ export default function Page() {
   const [loadingTiendas, setLoadingTiendas] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [tiendas, setTiendas] = useState([]);
+
+  // Limpiar token obsoleto del cliente si la cookie del servidor ya no existe (evita bucles)
+  useEffect(() => {
+    const hasCookie = document.cookie.includes('auth_token=');
+    if (token && !hasCookie) {
+      logout();
+    }
+  }, [token, logout]);
 
   useEffect(() => {
     if (token) {
@@ -47,10 +56,8 @@ export default function Page() {
       }
     };
 
-    if (!token) {
-      fetchTiendas();
-    }
-  }, [token]);
+    fetchTiendas();
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();

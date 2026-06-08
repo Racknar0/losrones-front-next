@@ -152,7 +152,7 @@ const Dashboard = () => {
       { header: 'Vendido Por', key: 'vendidoPor', width: 14 },
       { header: 'Cupon item', key: 'cuponItem', width: 16 },
       { header: 'Descuento item', key: 'descuentoItem', width: 16 },
-      { header: 'Envío Domicilio', key: 'envioDomicilio', width: 18 },
+      { header: 'Domicilio', key: 'envioDomicilio', width: 18 },
     ];
 
     const todayText = new Date().toLocaleString('es-MX');

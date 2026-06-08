@@ -31,7 +31,7 @@ const TableDashboard = ({
               <th>Total</th>
               <th>Método Pago</th>
               <th>Tipo</th>
-              <th>Envío</th>
+              <th>Domicilio</th>
               <th>Fecha</th>
               <th>Ticket</th>
             </tr>
