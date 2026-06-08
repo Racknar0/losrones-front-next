@@ -153,65 +153,79 @@ const ProcesoPago = ({
 
     return (
         <div className="type_sale_container">
-
-            {/* Componente para mostrar el total de la compra */}
-            <TotalValue
-                selectedCoupon={selectedCoupon}
-                totalCompra={totalCompra}
-                totalCompraSinCupon={totalCompraSinCupon}
-            />
-
-            {/* Componente para seleccionar un cupón general */}
-            <CuponTotal
-                cupon={cupon}
-                setCupon={setCupon}
-                handleCuponChange={handleCuponChange}
-                onSelectCoupon={handleSelectGlobalCoupon}
-            />
-
-            {/* Componente para seleccionar el método de pago */}
-            <SelectMetodoPago
-                tipoPago={tipoPago}
-                setTipoPago={setTipoPago}
-            />
-
-            {/* Componente dar informacion de cuanto se recibio y cuanto es el cambio */}
-
-            <Cambio 
-                efectivo={efectivo}
-                setEfectivo={setEfectivo}
-                cambio={cambio}
-                validarEfectivo={validarEfectivo}
-                tipoPago={tipoPago}
-            />
-
-            {/* Checkbox de Envío a domicilio */}
-            <div className="envio_domicilio_container">
-                <input
-                    type="checkbox"
-                    id="envioDomicilio"
-                    checked={isHomeDelivery}
-                    onChange={(e) => setIsHomeDelivery(e.target.checked)}
-                />
-                <label htmlFor="envioDomicilio">
-                    ¿Es envío a domicilio?
-                </label>
+            {/* FILA 1: Total y Cupón */}
+            <div className="payment_grid_row">
+                <div className="payment_grid_col">
+                    <p className="payment_section_title">Resumen de Venta</p>
+                    <TotalValue
+                        selectedCoupon={selectedCoupon}
+                        totalCompra={totalCompra}
+                        totalCompraSinCupon={totalCompraSinCupon}
+                    />
+                </div>
+                <div className="payment_grid_col">
+                    <p className="payment_section_title">Cupón Descuento</p>
+                    <CuponTotal
+                        cupon={cupon}
+                        setCupon={setCupon}
+                        handleCuponChange={handleCuponChange}
+                        onSelectCoupon={handleSelectGlobalCoupon}
+                    />
+                </div>
             </div>
-          
-                
-            <div className='finish_sale_container'>
-                {
-                    loading ? (
-                        <Spinner loading={loading} color="#6564d8" styles={{ marginTop: '40px' }} />
-                    ) : (
-                        <button className="d-flex btn_finalizar_venta mt-4 mx-auto" onClick={hadleFinalizarVenta}>
-                            <CashIcon className="icon_finalizar_venta" />
-                            <p>Finalizar venta</p>
-                        </button>
-                    )
-                }
+
+            {/* FILA 2: Método de Pago y Detalle de Efectivo */}
+            <div className="payment_grid_row mt-3">
+                <div className="payment_grid_col">
+                    <p className="payment_section_title">Método de Pago</p>
+                    <SelectMetodoPago
+                        tipoPago={tipoPago}
+                        setTipoPago={setTipoPago}
+                    />
+                </div>
+                <div className="payment_grid_col">
+                    <p className="payment_section_title">Monto Recibido / Cambio</p>
+                    <Cambio
+                        efectivo={efectivo}
+                        setEfectivo={setEfectivo}
+                        cambio={cambio}
+                        validarEfectivo={validarEfectivo}
+                        tipoPago={tipoPago}
+                    />
+                </div>
             </div>
-            
+
+            {/* FILA 3: Envío a Domicilio y Finalizar Venta */}
+            <div className="payment_grid_row mt-4 align-items-end">
+                <div className="payment_grid_col">
+                    <p className="payment_section_title">Opciones de Entrega</p>
+                    <div className="envio_domicilio_container">
+                        <input
+                            type="checkbox"
+                            id="envioDomicilio"
+                            checked={isHomeDelivery}
+                            onChange={(e) => setIsHomeDelivery(e.target.checked)}
+                        />
+                        <label htmlFor="envioDomicilio">
+                            ¿Es envío a domicilio?
+                        </label>
+                    </div>
+                </div>
+                <div className="payment_grid_col">
+                    <div className='finish_sale_container'>
+                        {
+                            loading ? (
+                                <Spinner loading={loading} color="#6564d8" />
+                            ) : (
+                                <button className="d-flex btn_finalizar_venta" onClick={hadleFinalizarVenta}>
+                                    <CashIcon className="icon_finalizar_venta" />
+                                    <p>Finalizar venta</p>
+                                </button>
+                            )
+                        }
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };
