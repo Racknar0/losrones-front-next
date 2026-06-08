@@ -31,6 +31,7 @@ const TableDashboard = ({
               <th>Total</th>
               <th>Método Pago</th>
               <th>Tipo</th>
+              <th>Envío</th>
               <th>Fecha</th>
               <th>Ticket</th>
             </tr>
@@ -38,13 +39,13 @@ const TableDashboard = ({
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="7" className="text-center py-4">
+                <td colSpan="8" className="text-center py-4">
                   <Spinner color="#6564d8" styles={{ margin: '0 auto' }} />
                 </td>
               </tr>
             ) : recibos.length === 0 ? (
               <tr>
-                <td colSpan="7" className="text-center py-4">
+                <td colSpan="8" className="text-center py-4">
                   No hay recibos en ese rango
                 </td>
               </tr>
@@ -65,6 +66,7 @@ const TableDashboard = ({
                   <td>${parseFloat(r.totalAmount).toFixed(2)}</td>
                   <td>{r.paymentMethod}</td>
                   <td>{r.type}</td>
+                  <td>{r.isHomeDelivery ? 'Sí' : 'No'}</td>
                   <td>
                     {new Date(r.createdAt).toLocaleString('es-ES', {
                       dateStyle: 'short',
@@ -119,6 +121,11 @@ const TableDashboard = ({
               <li className="col-12 col-md-6">
                 <div className="chip">
                   <strong>Descuento ticket:</strong> ${globalDiscount.toFixed(2)}
+                </div>
+              </li>
+              <li className="col-12 col-md-6">
+                <div className="chip">
+                  <strong>Envío a domicilio:</strong> {selected.isHomeDelivery ? 'Sí' : 'No'}
                 </div>
               </li>
             </ul>

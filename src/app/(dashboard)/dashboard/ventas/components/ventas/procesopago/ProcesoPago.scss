@@ -371,5 +371,34 @@
         }
     }
 
+    .envio_domicilio_container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        max-width: 510px;
+        width: 100%;
+        margin: 20px auto 0 auto;
+        padding: 12px 20px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e2e6ea;
 
+        label {
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            user-select: none;
+            margin: 0;
+        }
+
+        input[type="checkbox"] {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            accent-color: #6564d8;
+        }
+    }
 }

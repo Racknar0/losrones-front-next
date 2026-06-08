@@ -213,6 +213,7 @@ const TableRecibos = () => {
                             <th>Total</th>
                             <th>Método Pago</th>
                             <th>Tipo</th>
+                            <th>Envío</th>
                             <th>Fecha</th>
                             <th>Acciones</th>
                         </tr>
@@ -220,7 +221,7 @@ const TableRecibos = () => {
                     <tbody>
                         {loading ? (
                             <tr>
-                                <td colSpan="6" className="text-center py-4">
+                                <td colSpan="8" className="text-center py-4">
                                     <Spinner
                                         color="#6564d8"
                                         styles={{ margin: '0 auto' }}
@@ -229,7 +230,7 @@ const TableRecibos = () => {
                             </tr>
                         ) : recibos.length === 0 ? (
                             <tr>
-                                <td colSpan="6" className="text-center py-4">
+                                <td colSpan="8" className="text-center py-4">
                                     No hay recibos en ese rango
                                 </td>
                             </tr>
@@ -267,6 +268,11 @@ const TableRecibos = () => {
                                         className={r.isDeleted ? 'deleted' : ''}
                                     >
                                         {r.type}
+                                    </td>
+                                    <td
+                                        className={r.isDeleted ? 'deleted' : ''}
+                                    >
+                                        {r.isHomeDelivery ? 'Sí' : 'No'}
                                     </td>
                                     <td
                                         className={r.isDeleted ? 'deleted' : ''}
@@ -368,6 +374,12 @@ const TableRecibos = () => {
                                 <div className="chip">
                                     <strong>Descuento ticket:</strong>{' '}
                                     ${globalDiscount.toFixed(2)}
+                                </div>
+                            </li>
+                            <li className="col-12 col-md-6">
+                                <div className="chip">
+                                    <strong>Envío a domicilio:</strong>{' '}
+                                    {selected.isHomeDelivery ? 'Sí' : 'No'}
                                 </div>
                             </li>
                         </ul>

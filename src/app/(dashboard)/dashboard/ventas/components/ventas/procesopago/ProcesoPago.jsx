@@ -32,6 +32,7 @@ const ProcesoPago = ({
     const [efectivo, setEfectivo] = useState('');
     const [cupon, setCupon] = useState('');
     const [loading, setLoading] = useState(false);
+    const [isHomeDelivery, setIsHomeDelivery] = useState(false);
 
     const httpService = new HttpService();
 
@@ -109,6 +110,7 @@ const ProcesoPago = ({
             change: parseFloat(cambio),
             totalSinCupon: calculateTotalSinCupon(),
             cupon: selectedCoupon ? selectedCoupon.code : null,
+            isHomeDelivery,
             items: cartItems.map((item) => ({
                 stockUnitId: item.id,
                 productId: item.productId,
@@ -129,6 +131,7 @@ const ProcesoPago = ({
                 console.log('Venta registrada con éxito', res.data.sale.id);
                 resetFinisedSale();
                 setEfectivo('');
+                setIsHomeDelivery(false);
                 fetchProducts();
                 await timerAlert('Éxito', 'Venta registrada con éxito', 2000);
                 // Abrir en una nueva pestaña
@@ -181,6 +184,19 @@ const ProcesoPago = ({
                 validarEfectivo={validarEfectivo}
                 tipoPago={tipoPago}
             />
+
+            {/* Checkbox de Envío a domicilio */}
+            <div className="envio_domicilio_container">
+                <input
+                    type="checkbox"
+                    id="envioDomicilio"
+                    checked={isHomeDelivery}
+                    onChange={(e) => setIsHomeDelivery(e.target.checked)}
+                />
+                <label htmlFor="envioDomicilio">
+                    ¿Es envío a domicilio?
+                </label>
+            </div>
           
                 
             <div className='finish_sale_container'>

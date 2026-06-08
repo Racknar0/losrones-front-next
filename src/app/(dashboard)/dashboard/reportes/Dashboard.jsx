@@ -152,15 +152,16 @@ const Dashboard = () => {
       { header: 'Vendido Por', key: 'vendidoPor', width: 14 },
       { header: 'Cupon item', key: 'cuponItem', width: 16 },
       { header: 'Descuento item', key: 'descuentoItem', width: 16 },
+      { header: 'Envío Domicilio', key: 'envioDomicilio', width: 18 },
     ];
 
     const todayText = new Date().toLocaleString('es-MX');
-    worksheet.mergeCells('A1:P1');
+    worksheet.mergeCells('A1:Q1');
     worksheet.getCell('A1').value = 'Reporte de Ventas';
     worksheet.getCell('A1').font = { bold: true, size: 16, color: { argb: 'FF1F2937' } };
     worksheet.getCell('A1').alignment = { horizontal: 'center', vertical: 'middle' };
 
-    worksheet.mergeCells('A2:P2');
+    worksheet.mergeCells('A2:Q2');
     worksheet.getCell('A2').value = `Generado: ${todayText}`;
     worksheet.getCell('A2').font = { italic: true, size: 11, color: { argb: 'FF4B5563' } };
     worksheet.getCell('A2').alignment = { horizontal: 'center', vertical: 'middle' };
@@ -193,6 +194,7 @@ const Dashboard = () => {
           vendidoPor: soldWithCoupon ?? item.unitPrice,
           cuponItem: item.itemCouponCode || 'N/A',
           descuentoItem: descuentoItem ?? 0,
+          envioDomicilio: sale.isHomeDelivery ? 'Sí' : 'No',
         });
       });
     });
@@ -216,7 +218,7 @@ const Dashboard = () => {
 
     worksheet.autoFilter = {
       from: { row: 4, column: 1 },
-      to: { row: 4, column: 16 },
+      to: { row: 4, column: 17 },
     };
 
     const currencyColumns = ['F', 'H', 'L', 'M', 'N', 'P'];
